@@ -3,8 +3,6 @@
 import scipy.signal as signal
 import numpy as np
 import os.path
-import scipy
-#print scipy.__version__
 
 class EEGSet():
 
@@ -273,14 +271,12 @@ class EEGSet():
             n = len(t)
 
             for ch in rejectSet:
-                
-                
 
                 y = np.array(ch) # samples
                 y = y*hammingWindow # apply hamming window
                 y = y - np.mean(y) # demeaned samples ******** IS THIS NECESSARY??
 
-                pgram = scipy.signal.lombscargle(t, y, ang_freqs)
+                pgram = signal.lombscargle(t, y, ang_freqs)
                 if normalize:
                     pgram = np.sqrt(4*(pgram/n))
 
