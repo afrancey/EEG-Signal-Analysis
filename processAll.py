@@ -17,6 +17,7 @@ ang_freqs = ang_freqs[0:int(len(ang_freqs)/4.)]
 
 #pathToOrganized = 'F:\\'
 pathToOrganized = "C:\\Users\\alzfranc\\Desktop\\"
+pathToOrganized = "D:\\"
 
 outputpath = pathToOrganized + 'ORGANIZED\\PERIODOGRAMS\\'
 
@@ -46,6 +47,9 @@ bnotes = 'notes'
 norig = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - filtered\\'
 nreject = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - post rejections\\'
 nnotes = 'notes'
+
+forig = pathToOrganized + 'ORGANIZED\\data\\TEST\\exported - filtered\\'
+freject = pathToOrganized + 'ORGANIZED\\data\\TEST\\exported - post rejections\\'
 
 # dictionary of all filepaths
 filepaths = {'forward':{'orig': forig, 'reject' : freject, 'notes':fnotes},
