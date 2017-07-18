@@ -15,9 +15,7 @@ freqs = freqs[0:int(len(freqs)/4.)] # only looking at frequencies 0Hz to 55Hz
 ang_freqs = 2*np.pi*np.linspace(float(Fs)/nout, Fs, nout)
 ang_freqs = ang_freqs[0:int(len(ang_freqs)/4.)]
 
-#pathToOrganized = 'F:\\'
-pathToOrganized = "C:\\Users\\alzfranc\\Desktop\\"
-pathToOrganized = "D:\\"
+pathToOrganized = 'D:\\'
 
 outputpath = pathToOrganized + 'ORGANIZED\\PERIODOGRAMS\\'
 
@@ -26,8 +24,12 @@ outputpath = pathToOrganized + 'ORGANIZED\\PERIODOGRAMS\\'
 #freject = 'C:\\Users\\Adam Francey\\Desktop\\ORGANIZED\\data\\FORWARD\\EEG\\exported - post rejections\\'
 #fnotes = 'notes'
 
-forig = pathToOrganized + 'ORGANIZED\\data\\FORWARD\\EEG\\exported - filtered\\'
-freject = pathToOrganized + 'ORGANIZED\\data\\FORWARD\\EEG\\exported - post rejections\\'
+#forig = pathToOrganized + 'ORGANIZED\\data\\FORWARD\\EEG\\exported - filtered\\'
+#freject = pathToOrganized + 'ORGANIZED\\data\\FORWARD\\EEG\\exported - post rejections\\'
+#fnotes = 'notes'
+
+forig = pathToOrganized + 'ORGANIZED\\data\\TEST\\exported - filtered\\'
+freject = pathToOrganized + 'ORGANIZED\\data\\TEST\\exported - post rejections\\'
 fnotes = 'notes'
 
 # backward
@@ -47,9 +49,6 @@ bnotes = 'notes'
 norig = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - filtered\\'
 nreject = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - post rejections\\'
 nnotes = 'notes'
-
-forig = pathToOrganized + 'ORGANIZED\\data\\TEST\\exported - filtered\\'
-freject = pathToOrganized + 'ORGANIZED\\data\\TEST\\exported - post rejections\\'
 
 # dictionary of all filepaths
 filepaths = {'forward':{'orig': forig, 'reject' : freject, 'notes':fnotes},
@@ -71,7 +70,7 @@ def getListOfIDs(filenames):
 
 stops = ['base','s1','s2','s3','s4','s5','s6']
 
-paths = filepaths['newyork']
+paths = filepaths['forward']
 
 origfiles = os.listdir(paths['orig'])
 rejectfiles = os.listdir(paths['reject'])
