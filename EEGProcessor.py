@@ -29,7 +29,7 @@ class EEGSet():
                         self.error = 'file failure'
 
 
-        def process(self, freqs):
+        def process(self, freqs, method = 'lomb'):
 
                 N_freqs = len(freqs)
                 maxFreq = freqs[N_freqs-1]
@@ -42,8 +42,15 @@ class EEGSet():
 
                 ang_freqs = 2*np.pi*freqs
 
-                pgrams = self.getPeriodograms_SLOW(self.rejectSet, self.timeSteps, self.hammingArray, True, ang_freqs)
-                bandpowers, relative = self.get_bands(pgrams, freqBins)
+                if method == 'lomb':
+
+                    pgrams = self.getPeriodograms_SLOW(self.rejectSet, self.timeSteps, self.hammingArray, True, ang_freqs)
+                    bandpowers, relative = self.get_bands(pgrams, freqBins)
+                elif method == 'lombwelch':
+                    windowLength = 220 # 1 second
+                    windowOverlap = 110 # 0.5 seconds overlap
+                    pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArray, ang_freqs)
+                    bandpowers, relative = 0,0
 
                 return pgrams, bandpowers, relative
 
@@ -196,61 +203,6 @@ class EEGSet():
                 return indicatorArray
 
 
-        def makeIndicatorArray_OLD(self, originalSet, eventSet, rejectSet):
-
-                tp9 = originalSet[0]
-                numSamples = len(tp9)
-
-                indicatorArray = []
-
-                # no boundary events, every sample in original is good
-                if eventSet == []:
-                        for i in range(numSamples):
-                                indicatorArray.append(1)
-
-                else:
-
-                        # latency[i] - latency[i-1] = number of good samples between events i-1 and i
-                        # duration[i] = number of bad samples at event i
-
-                        previousLatency = 0
-
-
-                        for event in eventSet:
-                                latency = int(float(event[0]))
-                                duration = int(float(event[1]))
-                                print 'latency: ' + str(latency)
-                                print 'duration: ' + str(duration)
-
-
-                                # add ones for every sample in between boundaries
-                                numGoodSamples = latency - previousLatency
-                                previousLatency = latency
-                                for goodSample in range(numGoodSamples):
-                                        indicatorArray.append(1)
-                                print "added " +str(numGoodSamples) + " ones"
-
-                                # then add zeros for every sample in the boundary
-                                numBadSamples = duration
-                                for badSample in range(numBadSamples):
-                                        indicatorArray.append(0)
-                                print "added " +str(numBadSamples) + " zeros"
-
-                                
-                                        
-                        numLeftoverSamples = numSamples - len(indicatorArray) # number of samples after the last boundary, will all be good
-                        for goodSample in range(numLeftoverSamples):
-                                indicatorArray.append(1)
-
-                        print "added " + str(numLeftoverSamples) + " ones"
-
-
-
-                return indicatorArray
-
-
-
-
         def makeHammingArray(self, indicatorArray):
 
                 numSamples = len(indicatorArray)
@@ -263,6 +215,7 @@ class EEGSet():
                                 trimmedHamming.append(fullHamming[sampleNum])
 
                 return trimmedHamming
+
 
         def getPeriodograms_SLOW(self, rejectSet, times, window, normalize, ang_freqs):
             pgrams = []
@@ -284,19 +237,52 @@ class EEGSet():
 
             return pgrams
 
-        def getPeriodograms_FAST(self, rejectSet, times, window, normalize, ang_freqs):
-            #BROKEN - raises ValueError
+        def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArray, ang_freqs, normalize = True):
+
+            N = len(indicatorArray)
+
             pgrams = []
-            t = np.array(times) # times
-            hammingWindow = np.array(window)
-            n = len(t)
+            for ch in original:
 
-            y = np.array(rejectSet) * hammingWindow
-            pgrams = signal.lombscargle(t,y,ang_freqs)
+                ch_array = np.array(ch)
 
-            if normalize:
-                    pgrams = np.sqrt(4*(pgrams/n))
+                pgramSum = np.zeros(len(ang_freqs))
+                pgramCount = 0
+
+                for i in range(0,N, windowOverlap):
+                    if windowLength + i > N:
+                        # this should be last window
+                        endIndex = N
+                    else:
+                        endIndex = i+windowLength
+                        
+                    indicator = indicatorArray[i:endIndex]
+                    if sum(indicator) > 0:
+                        # if there are any good samples
+                        samples = ch_array[i:endIndex]
+                        
+                        t = np.array(self.makeTimeSteps(220, indicator))
+                        ham = np.array(self.makeHammingArray(indicator))
+
+                        trimmedSamples = np.array([])
+                        count = 0
+                        for ind in indicator:
+                            if ind:
+                                trimmedSamples = np.append(trimmedSamples,samples[count])
+                            count += 1
+
+                        y = trimmedSamples*ham
+                        y = y - np.mean(y)
+
+                        pgram = signal.lombscargle(t,y,ang_freqs)
+                        pgramSum = pgramSum + pgram
+                        pgramCount += 1
+                   #else: no samples within this time window, do nothing
+                avgPgram = pgramSum/pgramCount
+                if normalize:
+                    avgPgram = np.sqrt(4*(avgPgram/len(avgPgram)))
                     
+                pgrams.append(avgPgram)
             return pgrams
 
 

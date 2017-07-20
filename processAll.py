@@ -111,7 +111,7 @@ for ID in IDs:
 
         if eset.okayToProcess:
             try:
-                pgrams, bandpowers, relative = eset.process(freqs)
+                pgrams, bandpowers, relative = eset.process(freqs, 'lombwelch')
                 with open(outputpath + UUID + "-" + stop + ".txt",'w') as f:
 
                     for sample in range(len(pgrams[0])):
@@ -171,80 +171,3 @@ print freqs
 with open("failures_NAN.txt",'w') as f:
     f.write(stringToWrite)
     
-
-
-# gets a list of ids in a set
-# expected filenames named such as 1442676390786-17635-s3_filtered.txt'
-
-        
-
-    
-
-
-
-
-
-
-
-
-
-# to do... make this read csv and also make the csv file
-def get_channelsToReject_CSV(direction):
-
-    if direction == 'forward':
-        notesfilename = 'C:/Users/Adam Francey/Desktop/eeglab/to export/EEG Forward new data/NOTES_Forward.txt'
-    elif direction == 'backward':
-        notesfilename = 'C:/Users/Adam Francey/Desktop/eeglab/to export/EEG Reversed New Data/NOTES_Reversed.txt'
-    elif direction =='new york':
-        notesfilename = 'C:/Users/Adam Francey/Desktop/eeglab/to export/new york new data/NOTES_NEWYORK.txt'
-
-    suspects_tp9 = []
-    suspects_tp10 = []
-    suspects_af7 = []
-    suspects_af8 = []
-
-    with open(notesfilename,'r') as notes:
-
-        lines = notes.readlines()
-
-        for line in lines:
-            line = line.strip('\n').split('\t')
-
-            id_stop = line[0]
-            note = line[1]
-
-            regularNote = False
-
-            if 'tp9' in note:
-                suspects_tp9.append(id_stop) 
-                regularNote = True
-
-            if 'tp10' in note:
-                suspects_tp10.append(id_stop)
-                regularNote = True
-
-            if 'af7' in note:
-                suspects_af7.append(id_stop) 
-                regularNote = True
-
-            if 'af8' in note:
-                suspects_af8.append(id_stop)
-                regularNote = True
-
-            if 'empty' in note or 'missing' in note or 'all' in note or 'unable' in note:
-
-                # '-unable to read "not a binary MAT-file"''
-                # no channels named - all to be rejected
-                suspects_tp9.append(id_stop) 
-                suspects_tp10.append(id_stop)
-                suspects_af7.append(id_stop) 
-                suspects_af8.append(id_stop)
-                regularNote = True
-
-            if regularNote == False:
-                print note
-
-
-
-
-    return suspects_tp9, suspects_tp10, suspects_af7,suspects_af8
