@@ -111,7 +111,7 @@ for ID in IDs:
 
         if eset.okayToProcess:
             try:
-                pgrams, bandpowers, relative = eset.process(freqs, 'lombwelch')
+                pgrams, bandpowers, relative = eset.process(freqs, 'fftignorant')
                 with open(outputpath + UUID + "-" + stop + ".txt",'w') as f:
 
                     for sample in range(len(pgrams[0])):

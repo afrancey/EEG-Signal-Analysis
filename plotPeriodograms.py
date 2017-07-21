@@ -144,7 +144,7 @@ def plotChannel(channel, periodograms, freqs):
                 plt.subplot(3,4,stoplist.index(stop)+1)
                 plt.title(stop + channel)
                 #plt.plot(freqs,20*np.log10(channels[channel]['data']))
-                plt.plot(freqs,channels[channel]['data'])
+                plt.plot(freqs, channels[channel]['data'])
                 #print ID
                 #print stop
                 #print channels[channel]['data'][:5]
@@ -199,15 +199,17 @@ def plotOneByOne(periodograms,freqs):
 # main
 #path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_BACKWARD\\"
 #notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_BACKWARD.txt"
-path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_TEST_LOMBWELCH\\"
+path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_TEST_FFTIGNORANT\\"
 notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_TEST.txt"
 files = os.listdir(path)[0:150]
 #b = [x[:x.index('-')] for x in a]
 freqs = np.linspace(55./100000,55,100000)
+fft_freqs = np.linspace(0, 110, 20001)
+
 grams  = fillPeriodogramsDictStatus(path, files, notes)
 #print grams['18168']['s6']['tp9']['status']
 
-plotChannel('af7', grams, freqs) #af7: 56
+plotChannel('af7', grams, fft_freqs) #af7: 56
 
 plotAverageChannel('af7', grams, freqs)
 #plotOneByOne(grams,freqs)    

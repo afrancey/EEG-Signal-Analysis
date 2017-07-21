@@ -39,7 +39,7 @@ class EEGSet():
                 beta_i = (30/maxFreq)*N_freqs
                 gamma_i = (50/maxFreq)*N_freqs
                 freqBins = [0,int(delta_i),int(theta_i),int(alpha_i),int(beta_i),int(gamma_i)]
-
+                
                 ang_freqs = 2*np.pi*freqs
 
                 if method == 'lomb':
@@ -51,6 +51,9 @@ class EEGSet():
                     windowOverlap = 110 # 0.5 seconds overlap
                     pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArray, ang_freqs)
                     bandpowers, relative = 0,0
+                elif method == 'fftignorant':
+                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.rejectSet)
+                    bandpowers, relative = 0,0 
 
                 return pgrams, bandpowers, relative
 
@@ -284,6 +287,12 @@ class EEGSet():
                     
                 pgrams.append(avgPgram)
             return pgrams
+
+        def getPeriodograms_fftignorant(self,rejectSet):
+                return signal.periodogram(np.array(rejectSet), fs = 220, window = 'hamming',
+                                   nfft = 40000, detrend = 'constant', return_onesided = True,
+                                        scaling = 'density', axis = -1)
+                
 
 
         def get_bands(self, pgrams, freqBins):
