@@ -199,8 +199,11 @@ def plotOneByOne(periodograms,freqs):
 # main
 #path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_BACKWARD\\"
 #notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_BACKWARD.txt"
-path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_TEST_FFTIGNORANT\\"
-notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_TEST.txt"
+#path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_TEST_FFTIGNORANT\\"
+#notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_TEST.txt"
+path = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_FFTIG_ORIG_BACK\\"
+#path = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_FFTIG_BACK\\"
+notes = "C:\\Users\\alzfranc\\Desktop\\v2\\NOTES_BACKWARD.txt"
 files = os.listdir(path)[0:150]
 #b = [x[:x.index('-')] for x in a]
 freqs = np.linspace(55./100000,55,100000)
@@ -211,11 +214,6 @@ grams  = fillPeriodogramsDictStatus(path, files, notes)
 
 plotChannel('af7', grams, fft_freqs) #af7: 56
 
-plotAverageChannel('af7', grams, freqs)
-#plotOneByOne(grams,freqs)    
-    
-        
-                                
-
-        
-
+#plotAverageChannel('af7', grams, fft_freqs)
+#plotOneByOne(grams,freqs)
+#plotFile("C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_FFTIG_ORIG_BACK\\20703-s6.txt")

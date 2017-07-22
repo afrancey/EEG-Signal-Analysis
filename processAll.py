@@ -15,9 +15,11 @@ freqs = freqs[0:int(len(freqs)/4.)] # only looking at frequencies 0Hz to 55Hz
 ang_freqs = 2*np.pi*np.linspace(float(Fs)/nout, Fs, nout)
 ang_freqs = ang_freqs[0:int(len(ang_freqs)/4.)]
 
-pathToOrganized = 'D:\\'
+#pathToOrganized = 'D:\\'
+pathToOrganized = "C:\\Users\\alzfranc\\Desktop\\"
 
 outputpath = pathToOrganized + 'ORGANIZED\\PERIODOGRAMS\\'
+
 
 # forward
 #forig = 'C:\\Users\\Adam Francey\\Desktop\\ORGANIZED\\data\\FORWARD\\EEG\\exported - filtered\\'
@@ -50,10 +52,15 @@ norig = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - filtered\\'
 nreject = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - post rejections\\'
 nnotes = 'notes'
 
+corig = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - filtered\\'
+creject = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - post rejections\\'
+cnotes = 'notes'
+
 # dictionary of all filepaths
 filepaths = {'forward':{'orig': forig, 'reject' : freject, 'notes':fnotes},
              'backward':{'orig': borig, 'reject' : breject, 'notes':bnotes},
-             'newyork': {'orig': norig, 'reject' : nreject, 'notes':nnotes}
+             'newyork': {'orig': norig, 'reject' : nreject, 'notes':nnotes},
+             'custom': {'orig': corig, 'reject' : creject, 'notes':cnotes},
             }
 
 
@@ -70,7 +77,7 @@ def getListOfIDs(filenames):
 
 stops = ['base','s1','s2','s3','s4','s5','s6']
 
-paths = filepaths['forward']
+paths = filepaths['backward']
 
 origfiles = os.listdir(paths['orig'])
 rejectfiles = os.listdir(paths['reject'])
@@ -111,7 +118,7 @@ for ID in IDs:
 
         if eset.okayToProcess:
             try:
-                pgrams, bandpowers, relative = eset.process(freqs, 'fftignorant')
+                pgrams, bandpowers, relative = eset.process(freqs, 'fftignorant_original')
                 with open(outputpath + UUID + "-" + stop + ".txt",'w') as f:
 
                     for sample in range(len(pgrams[0])):
@@ -170,4 +177,3 @@ print freqs
 
 with open("failures_NAN.txt",'w') as f:
     f.write(stringToWrite)
-    

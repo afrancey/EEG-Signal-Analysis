@@ -53,7 +53,10 @@ class EEGSet():
                     bandpowers, relative = 0,0
                 elif method == 'fftignorant':
                     (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.rejectSet)
-                    bandpowers, relative = 0,0 
+                    bandpowers, relative = 0,0
+                elif method == 'fftignorant_original':
+                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.originalSet)
+                    bandpowers, relative = 0,0
 
                 return pgrams, bandpowers, relative
 
@@ -373,6 +376,3 @@ class EEGSet():
 
 
                 return trimmedOriginal == rejected
-
-
-
