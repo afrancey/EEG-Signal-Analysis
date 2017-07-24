@@ -1,13 +1,16 @@
 # gets periodograms of a file with 4 columns
 import numpy as np
 import scipy.signal as signal
+import matplotlib.pyplot as plt
 tp9 = []
 tp10 = []
 af7 = []
 af8 = []
 
 #filename = 'C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\data\\BACKWARD\\EEG\\split by stop\\1446314850918-20703\\1446314850918-20703-s6.txt'
-filename = 'C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\data\\BACKWARD\\EEG\\split by stop\\1447527918014-201\\1447527918014-201-s4.txt'
+#filename = 'C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\data\\BACKWARD\\EEG\\split by stop\\1447527918014-201\\1447527918014-201-s4.txt'
+
+filename = 'D:\\ORGANIZED\\data\\BACKWARD\\EEG\\split by stop\\1447527918014-201\\1447527918014-201-s4.txt'
 
 with open(filename, 'r') as f:
     lines = f.readlines()
@@ -28,6 +31,6 @@ fft_freqs = np.linspace(0, 110, 20001)
 
 for i in range(1,5):
     plt.subplot(2,2,i)
-    plt.plot(fft_freqs,pgrams[i-1])
+    plt.plot(fft_freqs[:len(fft_freqs)/2.],pgrams[i-1][:len(fft_freqs)/2.])
 
 plt.show()
