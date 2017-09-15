@@ -15,10 +15,10 @@ freqs = freqs[0:int(len(freqs)/4.)] # only looking at frequencies 0Hz to 55Hz
 ang_freqs = 2*np.pi*np.linspace(float(Fs)/nout, Fs, nout)
 ang_freqs = ang_freqs[0:int(len(ang_freqs)/4.)]
 
-#pathToOrganized = 'D:\\'
-pathToOrganized = "C:\\Users\\alzfranc\\Desktop\\"
+pathToOrganized = 'D:\\'
+#pathToOrganized = "C:\\Users\\alzfranc\\Desktop\\"
 
-outputpath = pathToOrganized + 'ORGANIZED\\PERIODOGRAMS\\'
+outputpath = pathToOrganized + 'ORGANIZED\\PERIODOGRAMS_TEST_FROMFILE\\'
 
 
 # forward
@@ -52,8 +52,9 @@ norig = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - filtered\\'
 nreject = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - post rejections\\'
 nnotes = 'notes'
 
-corig = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - filtered\\'
-creject = pathToOrganized + 'ORGANIZED\\data\\NEWYORK\\EEG\\exported - post rejections\\'
+# custom
+corig = pathToOrganized + 'ORGANIZED\\data\\TEST_FROMFILE\\exported - filtered\\'
+creject = pathToOrganized + 'ORGANIZED\\data\\TEST_FROMFILE\\exported - post rejections\\'
 cnotes = 'notes'
 
 # dictionary of all filepaths
@@ -77,7 +78,8 @@ def getListOfIDs(filenames):
 
 stops = ['base','s1','s2','s3','s4','s5','s6']
 
-paths = filepaths['backward']
+paths = filepaths['custom']
+testmode = True
 
 origfiles = os.listdir(paths['orig'])
 rejectfiles = os.listdir(paths['reject'])
@@ -118,8 +120,9 @@ for ID in IDs:
 
         if eset.okayToProcess:
             try:
-                pgrams, bandpowers, relative = eset.process(freqs, 'fftignorant_original')
+                pgrams, bandpowers, relative = eset.process(freqs, 'lomb')
                 with open(outputpath + UUID + "-" + stop + ".txt",'w') as f:
+                    print "OUTPUTTING"
 
                     for sample in range(len(pgrams[0])):
                         f.write(str(pgrams[0][sample]) + '\t' + str(pgrams[1][sample]) + '\t'
