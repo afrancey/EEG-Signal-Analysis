@@ -15,8 +15,8 @@ class EEGSet():
                 
                 self.originalSet = self.importEEGSet(originalFilename)
                 self.rejectSet = self.importEEGSet(rejectFilename)
-
                 if self.rejectSet != "file does not exist" and self.originalSet != "file does not exist":
+                        print "FILE EXISTS"
                         self.events = self.importEvents(eventsFilename)
                         self.indicatorArray = self.makeIndicatorArray(self.originalSet,self.events, self.rejectSet)
                         if self.indicatorArray != False and self.TEST_indicator(self.originalSet,self.rejectSet, self.indicatorArray):
@@ -46,16 +46,32 @@ class EEGSet():
 
                     pgrams = self.getPeriodograms_SLOW(self.rejectSet, self.timeSteps, self.hammingArray, True, ang_freqs)
                     bandpowers, relative = self.get_bands(pgrams, freqBins)
+
+                elif method == 'lomb_on_original':
+
+                    fullHamming = signal.hamming(len(self.originalSet[0]), sym=True)
+                    #fullHamming = np.ones(len(self.originalSet[0]))
+                    indicatorArray = np.ones(len(self.originalSet[0]))
+                    timesteps = self.makeTimeSteps(self.Fs, indicatorArray)
+
+                    pgrams = self.getPeriodograms_SLOW(self.originalSet, timesteps, fullHamming, True, ang_freqs)
+                    bandpowers, relative = self.get_bands(pgrams, freqBins)
+                    
+                
                 elif method == 'lombwelch':
                     windowLength = 220 # 1 second
                     windowOverlap = 110 # 0.5 seconds overlap
+
+                    windowLength = len(self.originalSet[0])/2 # half of signal length
+                    windowOverlap = windowLength/2 # windows overlap by half of their length
+                    
                     pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArray, ang_freqs)
                     bandpowers, relative = 0,0
                 elif method == 'fftignorant':
-                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.rejectSet)
+                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.rejectSet, len(freqs))
                     bandpowers, relative = 0,0
                 elif method == 'fftignorant_original':
-                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.originalSet)
+                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.originalSet,len(freqs))
                     bandpowers, relative = 0,0
 
                 return pgrams, bandpowers, relative
@@ -87,6 +103,7 @@ class EEGSet():
                             af8.append(float(line[3]))
                     return [tp9,tp10,af7,af8]
                 except ValueError:
+                    print "ValueError"
                     return "file does not exist" # actually does exist but not right format (probably empty)
             else:
                     return "file does not exist"
@@ -229,15 +246,20 @@ class EEGSet():
             hammingWindow = np.array(window)
             n = len(t)
 
+            print "n: " + str(n)
+
             for ch in rejectSet:
+
 
                 y = np.array(ch) # samples
                 y = y*hammingWindow # apply hamming window
-                y = y - np.mean(y) # demeaned samples ******** IS THIS NECESSARY??
+                y = y - np.mean(y) # demeaned samples ******** IS THIS NECESSARY?? Answer: yes to avoid low frequency noise
 
                 pgram = signal.lombscargle(t, y, ang_freqs)
                 if normalize:
                     pgram = np.sqrt(4*(pgram/n))
+
+                print "len(pgram): " + str(len(pgram))
 
                 pgrams.append(pgram)
 
@@ -281,20 +303,34 @@ class EEGSet():
                         y = y - np.mean(y)
 
                         pgram = signal.lombscargle(t,y,ang_freqs)
+                        if normalize:
+                            pgram = np.sqrt(4*(pgram/len(pgram)))
                         pgramSum = pgramSum + pgram
                         pgramCount += 1
                    #else: no samples within this time window, do nothing
                 avgPgram = pgramSum/pgramCount
-                if normalize:
-                    avgPgram = np.sqrt(4*(avgPgram/len(avgPgram)))
+                
+                #deprecated: now normalizing intermediate periodograms
+                #if normalize:
+                #    avgPgram = np.sqrt(4*(avgPgram/len(avgPgram)))
                     
                 pgrams.append(avgPgram)
             return pgrams
 
-        def getPeriodograms_fftignorant(self,rejectSet):
-                return signal.periodogram(np.array(rejectSet), fs = 220, window = 'hamming',
-                                   nfft = 40000, detrend = 'constant', return_onesided = True,
-                                        scaling = 'density', axis = -1)
+        def getPeriodograms_fftignorant(self,rejectSet, N):
+                #return signal.periodogram(np.array(rejectSet), fs = 220, window = 'hamming',
+                #                   nfft = 40000, detrend = 'constant', return_onesided = True,
+                #                        scaling = 'density', axis = -1)
+
+                # using hamming window seems to throw things off quite a bit?
+                #(frequencies, pgram) = signal.periodogram(np.array(rejectSet), fs = self.Fs, window = 'hamming',
+                                  #detrend = 'constant', axis = -1)
+                (frequencies, pgram) = signal.periodogram(np.array(rejectSet), fs = self.Fs, nfft = 4*N,
+                                  detrend = 'constant', return_onesided = False, axis = -1)
+
+                print pgram.shape
+                return (frequencies[:N], np.sqrt(4*self.Fs*pgram/len(rejectSet[0]))[:,:N])
+                #return (frequencies, np.sqrt(self.Fs*pgram/len(pgram)))
                 
 
 
