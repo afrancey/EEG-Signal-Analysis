@@ -227,7 +227,7 @@ def plotChannelFromFile(filename, channel):
     #plt.show()
 
 
-def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, amp_spec_dens = True):
+def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, orientation, amp_spec_dens = True):
 
     # mutates periodograms, adds the band power list to channel dict
     # all periodograms were created as amplitude spectral densities
@@ -242,6 +242,11 @@ def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, a
         start_i = int((start/maxFreq)*len(freqs))
         end_i = int((end/maxFreq)*len(freqs))
         index_intervals.append([start_i,end_i])
+
+    lower_bound = index_intervals[0][0] # lower bound for total power
+    upper_bound = index_intervals[len(index_intervals) -1][1] # used for calculating total power, using the end of the last band
+                    # instead of all the way to 55 Hz (garbage data after ~30)
+            
         
     # calculate band powers
     for ID in periodograms.keys():
@@ -255,7 +260,7 @@ def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, a
                     if amp_spec_dens:
                         pgram = (pgram**2)*len(pgram)/4
 
-                    total_power = np.sum(pgram)
+                    total_power = np.sum(pgram[lower_bound:upper_bound])
 
                     # get band power by summing indicies
                     band_powers = []
@@ -269,24 +274,32 @@ def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, a
                     channels[channel]['band powers'] = band_powers
 
     # save file
+
     stops_ordered = ['base', 's1','s2','s3','s4','s5','s6']
     channels_ordered = ['tp9','tp10','af7','af8']
 
-    with open("BAND_POWERS.csv", 'w') as f:
+    with open("POTS_band_powers.csv", 'w') as f:
 
         # write header
-        header_to_write = 'ID'
+        header_to_write = 'subject,orientation'
         for s in stops_ordered:
             for c in channels_ordered:
                 for b in listof_band_names:
                     header_to_write += ',' + s + c + b
         header_to_write += '\n'
         f.write(header_to_write)
+
+        # re-order the stops
+        # after writing the header
+        # if the orientation is backward (s1 -> s6, s2 -> s5, etc)
+        # so if the orientation is backward, the s6 stop gets written in the s1 slot, vice versa
+        if orientation == 'backward':
+            stops_ordered = ['base', 's6','s5','s4','s3','s2','s1']
                     
         
         # write line for every participant
         for ID in periodograms.keys():
-            line_to_write = ID
+            line_to_write = ID + ',' + orientation
             stops = periodograms[ID]
             for stop in stops_ordered:
                 channels = stops[stop]
@@ -319,7 +332,7 @@ notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_TEST.txt"
 #path = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_FFTIG_BACK\\"
 #notes = "C:\\Users\\alzfranc\\Desktop\\v2\\NOTES_BACKWARD.txt"
 
-files = os.listdir(path)[0:150]
+files = os.listdir(path)
 #b = [x[:x.index('-')] for x in a]
 freqs = np.linspace(55./100000,55,100000) # for periodogram of length 100k
 fft_freqs = np.linspace(0, 110, 20001) # for fft
@@ -342,11 +355,12 @@ fft_freqs = np.linspace(0, 110, 20001) # for fft
 
 # SAVE FILES
 pathways = ['222222222-s1.txt','222222222-s2.txt','222222222-s3.txt','222222222-s4.txt', '222222222-s5.txt']
+orientation = 'forward'
 grams = fillPeriodogramsDictStatus(path,pathways,notes)
 #grams = fillPeriodogramsDictStatus(path,files,notes)
 freqs = np.linspace(float(220)/(4*100000),220,4*100000) # for periodogram of length 100k
 freqs = freqs[0:int(len(freqs)/4.)]
-save_band_powers(freqs, [[0,15],[15,25]], ['b1','b2'], grams, amp_spec_dens = False)
+save_band_powers(freqs, [[0,15],[15,25]], ['b1','b2'], grams, orientation, amp_spec_dens = False)
 
 
 
