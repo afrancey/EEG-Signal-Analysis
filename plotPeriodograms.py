@@ -287,7 +287,7 @@ def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, o
         for s in stops_ordered:
             for c in channels_ordered:
                 for b in listof_band_names:
-                    header_to_write += ',' + s + c + b
+                    header_to_write += ',' + s + '_' + c + '_' + b
         header_to_write += '\n'
         f.write(header_to_write)
 
@@ -363,7 +363,7 @@ grams = fillPeriodogramsDictStatus(path,pathways,notes)
 freqs = np.linspace(float(220)/(4*100000),220,4*100000) # for periodogram of length 100k
 freqs = freqs[0:int(len(freqs)/4.)]
 #save_band_powers(freqs, [[0,15],[15,25]], ['b1','b2'], grams, orientation, amp_spec_dens = False)
-save_band_powers(freqs, [[0,15]], ['b1'], grams, orientation, amp_spec_dens = False)
+save_band_powers(freqs, [[0,25],[25,50]], ['b1', 'b2'], grams, orientation, amp_spec_dens = False)
 
 
 
