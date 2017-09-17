@@ -257,6 +257,8 @@ def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, o
                 if channels[channel]['status']:
 
                     pgram = np.array(channels[channel]['data'])
+
+                    # transform to power spectral density if periodogram is amplitude spectral density
                     if amp_spec_dens:
                         pgram = (pgram**2)*len(pgram)/4
 
@@ -360,7 +362,8 @@ grams = fillPeriodogramsDictStatus(path,pathways,notes)
 #grams = fillPeriodogramsDictStatus(path,files,notes)
 freqs = np.linspace(float(220)/(4*100000),220,4*100000) # for periodogram of length 100k
 freqs = freqs[0:int(len(freqs)/4.)]
-save_band_powers(freqs, [[0,15],[15,25]], ['b1','b2'], grams, orientation, amp_spec_dens = False)
+#save_band_powers(freqs, [[0,15],[15,25]], ['b1','b2'], grams, orientation, amp_spec_dens = False)
+save_band_powers(freqs, [[0,15]], ['b1'], grams, orientation, amp_spec_dens = False)
 
 
 
