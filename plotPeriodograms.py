@@ -280,7 +280,7 @@ def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, o
     stops_ordered = ['base', 's1','s2','s3','s4','s5','s6']
     channels_ordered = ['tp9','tp10','af7','af8']
 
-    with open("POTS_band_powers.csv", 'w') as f:
+    with open("POTS_band_powers.csv", 'a') as f:
 
         # write header
         header_to_write = 'subject,orientation'
@@ -327,14 +327,14 @@ def save_band_powers(freqs, listof_intervals, listof_band_names, periodograms, o
 #path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_TEST\\"
 #path = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\PERIODOGRAMS_TEST_LOMBWELCH\\"
 
-path = "D:ORGANIZED\\PERIODOGRAMS_TEST_FROMFILE\\"
-notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_TEST.txt"
+#path = "D:ORGANIZED\\PERIODOGRAMS_TEST_FROMFILE\\"
+#notes = "C:\\Users\\Adam Francey\\Desktop\\LOMB EEG\\NOTES_TEST.txt"
 
 #path = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_FFTIG_ORIG_BACK\\"
 #path = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_FFTIG_BACK\\"
 #notes = "C:\\Users\\alzfranc\\Desktop\\v2\\NOTES_BACKWARD.txt"
 
-files = os.listdir(path)
+#files = os.listdir(path)
 #b = [x[:x.index('-')] for x in a]
 freqs = np.linspace(55./100000,55,100000) # for periodogram of length 100k
 fft_freqs = np.linspace(0, 110, 20001) # for fft
@@ -356,14 +356,31 @@ fft_freqs = np.linspace(0, 110, 20001) # for fft
 #plotSignalFile("D:\\ORGANIZED\\data\\TEST_FROMFILE\\exported - filtered\\1111111111-s1_filtered.txt")
 
 # SAVE FILES
-pathways = ['222222222-s1.txt','222222222-s2.txt','222222222-s3.txt','222222222-s4.txt', '222222222-s5.txt']
-orientation = 'forward'
-grams = fillPeriodogramsDictStatus(path,pathways,notes)
-#grams = fillPeriodogramsDictStatus(path,files,notes)
-freqs = np.linspace(float(220)/(4*100000),220,4*100000) # for periodogram of length 100k
-freqs = freqs[0:int(len(freqs)/4.)]
-#save_band_powers(freqs, [[0,15],[15,25]], ['b1','b2'], grams, orientation, amp_spec_dens = False)
-save_band_powers(freqs, [[0,25],[25,50]], ['b1', 'b2'], grams, orientation, amp_spec_dens = False)
+make_file = True
+if make_file == True:
+    
+    #path = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_FORWARD\\"
+    #notes = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\data\\FORWARD\\EEG\\NOTES_FORWARD.txt"
+    #orientation = 'forward'
+    path = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\PERIODOGRAMS_BACKWARD\\"
+    notes = "C:\\Users\\alzfranc\\Desktop\\ORGANIZED\\data\\BACKWARD\\EEG\\NOTES_BACKWARD.txt"
+    orientation = 'backward'
+    files = os.listdir(path)[200:400]
+    grams = fillPeriodogramsDictStatus(path,files,notes)
+    freqs = np.linspace(float(220)/(4*100000),220,4*100000) # for periodogram of length 100k
+    freqs = freqs[0:int(len(freqs)/4.)]
+    save_band_powers(freqs, [[1,4],[4,7],[7.5, 12.5],[13,20]], ['delta', 'theta', 'alpha', 'beta'], grams, orientation, amp_spec_dens = True)
+
+
+save_tests = False
+if save_tests:
+    pathways = ['222222222-s1.txt','222222222-s2.txt','222222222-s3.txt','222222222-s4.txt', '222222222-s5.txt']
+    orientation = 'forward'
+    grams = fillPeriodogramsDictStatus(path,pathways,notes)
+    #grams = fillPeriodogramsDictStatus(path,files,notes)
+    freqs = np.linspace(float(220)/(4*100000),220,4*100000) # for periodogram of length 100k
+    freqs = freqs[0:int(len(freqs)/4.)]
+    save_band_powers(freqs, [[0,25],[25,50]], ['b1', 'b2'], grams, orientation, amp_spec_dens = True)
 
 
 
