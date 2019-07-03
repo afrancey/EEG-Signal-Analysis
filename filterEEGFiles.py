@@ -32,8 +32,9 @@ for filename in file_list:
         with open(outputdir + "/" + filename,"w") as f:
             f.write(header)
             for sample in range(0, len(filtered[0])):
-                f.write(str(filtered[0][sample]) + "\t" +
+                f.write(str(sample) + "\t" +
                         str(filtered[0][sample]) + "\t" +
-                        str(filtered[0][sample]) + "\t" +
-                        str(filtered[0][sample]) + "\n")
+                        str(filtered[1][sample]) + "\t" +
+                        str(filtered[2][sample]) + "\t" +
+                        str(filtered[3][sample]) + "\n")
             
