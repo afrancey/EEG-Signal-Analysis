@@ -239,32 +239,6 @@ class EEGSet():
 
                 return trimmedHamming
 
-
-        def getPeriodograms_SLOW(self, rejectSet, times, window, normalize, ang_freqs):
-            pgrams = []
-            t = np.array(times) # times
-            hammingWindow = np.array(window)
-            n = len(t)
-
-            print "n: " + str(n)
-
-            for ch in rejectSet:
-
-
-                y = np.array(ch) # samples
-                y = y*hammingWindow # apply hamming window
-                y = y - np.mean(y) # demeaned samples ******** IS THIS NECESSARY?? Answer: yes to avoid low frequency noise
-
-                pgram = signal.lombscargle(t, y, ang_freqs)
-                if normalize:
-                    pgram = np.sqrt(4*(pgram/n))
-
-                print "len(pgram): " + str(len(pgram))
-
-                pgrams.append(pgram)
-
-            return pgrams
-
         def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArray, ang_freqs, normalize = True):
 
             N = len(indicatorArray)
@@ -316,23 +290,6 @@ class EEGSet():
                     
                 pgrams.append(avgPgram)
             return pgrams
-
-        def getPeriodograms_fftignorant(self,rejectSet, N):
-                #return signal.periodogram(np.array(rejectSet), fs = 220, window = 'hamming',
-                #                   nfft = 40000, detrend = 'constant', return_onesided = True,
-                #                        scaling = 'density', axis = -1)
-
-                # using hamming window seems to throw things off quite a bit?
-                #(frequencies, pgram) = signal.periodogram(np.array(rejectSet), fs = self.Fs, window = 'hamming',
-                                  #detrend = 'constant', axis = -1)
-                (frequencies, pgram) = signal.periodogram(np.array(rejectSet), fs = self.Fs, nfft = 4*N,
-                                  detrend = 'constant', return_onesided = False, axis = -1)
-
-                print pgram.shape
-                return (frequencies[:N], np.sqrt(4*self.Fs*pgram/len(rejectSet[0]))[:,:N])
-                #return (frequencies, np.sqrt(self.Fs*pgram/len(pgram)))
-                
-
 
         def get_bands(self, pgrams, freqBins):
 
