@@ -162,69 +162,22 @@ class EEGSet():
 
             return times
         
-        def makeIndicatorArray(self, originalSet, eventSet, rejectSet):
+        def makeIndicatorArray(self, sample_bounds, size):
+            indicatorArray = []
+            for d in range(size):
+                rejected = False
+                for bound in range(0,len(sample_bounds),2):
+                    start = min(sample_bounds[bound], sample_bounds[bound+1])
+                    end = max(sample_bounds[bound], sample_bounds[bound+1])
+                    if d >= start and d <=end:
+                        rejected = True
 
-                # relevent arrays and such
-                # arbitrarily using tp9 since indicator array is universal over all channels
-                orig = originalSet[0]
-                reject = rejectSet[0]
-
-                # first break the rejectSet into chunks
-                chunks = []
-                prev = 0
-                for event in eventSet:
-                        latency = int(float(event[0]))
-                        chunks.append(reject[prev:latency])
-                        prev = latency
-                chunks.append(reject[prev:])
-
-                # given the chunks, construct an array of length len(orig) such that
-                # indicatorArray[i] = 1 where orig[i] is located within a chunk
-                indicatorArray = [1]*len(orig)
-                i = 0
-                lastKnownGoodi = i
-                for chunk in chunks:
-                        l = len(chunk)
-                        foundSubset = False
-                        while not foundSubset:
-
-                                if i >= len(indicatorArray):
-
-                                        # this catches a chunk due to overlap bug in EEGLAB
-                                        print "can't find chunk number " + str(chunks.index(chunk)) + " out of " + str(len(chunks)) #
-                                        print "chunk length: " + str(len(chunk))
-                                        
-                                        i = lastKnownGoodi
-                                        foundSubset=True
-                                        return False
-                                elif orig[i:i+l] == chunk:
-                                        # we have found the subset corresponding to the chunk
-                                        # list initialized as ones - no changes needed
-                                        # skip the index forward
-                                        i = i +  l
-                                        lastKnownGoodi = i
-                                        foundSubset = True
-                                else:
-                                        # we are not inside the subset
-                                        # this sample is in a rejected portion
-                                        # set it to 0 to indicate as such
-                                        indicatorArray[i] = 0
-                                        i = i + 1
-
-                # now do something special
-                # if there is a boundary at the edge of the set
-                # EEGLAB will NOT record it as such
-                # therefore, crop indicator accordingly based on length of rejects
-
-                N_reject = len(reject)
-                N_indicator = len(indicatorArray)
-                N_ones = sum(indicatorArray)
-                indicatorArray = indicatorArray[:N_indicator - (N_ones-N_reject)]
-
-
-
-                return indicatorArray
-
+                if rejected:
+                    indicatorArray.append(0)
+                else:
+                    indicatorArray.append(1)
+                    
+            return indicatorArray
 
         def makeHammingArray(self, indicatorArray):
 
