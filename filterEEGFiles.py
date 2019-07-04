@@ -1,14 +1,21 @@
-# use butterworth filter to filter signal noise
-import scipy.signal as scisig
-import os
-
+# filterEEGFiles: use butterworth bandpass filter to filter signal noise
 # filter order: https://dsp.stackexchange.com/questions/37646/filter-order-rule-of-thumb
+
+# --- PARAMS --- #
+filter_order = 10
+min_freq = 0.1 # Hz
+max_freq = 40 # Hz
+f_samp = 220 # sampling rate, Hz
 
 inputdir = "C:/Users/alzfr/Desktop/testeeg"
 outputdir = "C:/Users/alzfr/Desktop/testeegout"
-file_list = os.listdir(inputdir)
+# ---        --- #
 
-sos = scisig.butter(10, [1,30], 'bp', fs=220, output='sos')
+import scipy.signal as scisig
+import os
+
+file_list = os.listdir(inputdir)
+sos = scisig.butter(filter_order, [min_freq, max_freq], 'bp', fs=f_samp, output='sos')
 header = "\n"
 
 for filename in file_list:
