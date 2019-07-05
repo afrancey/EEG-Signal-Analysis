@@ -15,7 +15,7 @@ freqs = freqs[0:int(len(freqs)/4.)] # only looking at frequencies 0Hz to 55Hz
 ang_freqs = 2*np.pi*freqs
 
 inputpath = "" # folder which contains EEG files
-boundaryfile = "" # path to boundaries
+boundaryfilepath = "" # path to boundaries
 outputpath = ""
 
 stringToWrite = ""
@@ -25,8 +25,18 @@ startTime = time.time()
 
 for filename in os.listdir(inputpath):
     if "EEG" in filename:
-        eset = EEGSet(inputpath + "/" + filename)
+
+        print("Calculating periodograms for file: " + filename)
+        eset = EEGSet(inputpath + "/" + filename, boundaryfilepath)
         pgrams, bandpowers, relative = eset.process(freqs)
+
+        stringToWrite+= filename + ","
+
+        #relative[i][j] = band power at channel i band j
+        
+        for band in range(0,5):
+            stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)] + ","
+        
                     
     
 print("time: " + str(time.time() - startTime))
