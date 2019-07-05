@@ -78,7 +78,9 @@ class EEGSet():
 
         def importEEGSet(self, EEGSetFilename):
 
-            print os.path.isfile(EEGSetFilename)
+            print(os.path.isfile(EEGSetFilename))
+
+            str_chandata = [[],[],[],[]]
 
             if os.path.isfile(EEGSetFilename):
 
@@ -89,19 +91,17 @@ class EEGSet():
                     with open(EEGSetFilename,'r') as f:
                         lines = f.readlines()
 
-                        tp9 = []
-                        tp10 = []
-                        af7 = []
-                        af8 = []
-
                         for line in lines[1:]:
-                            line = line.strip().split('\t') #tp9, tp10, af7, af8
+                            line = line.strip().split('\t') #index, tp9, tp10, af7, af8
+
+                            for i in range(4):
+                                str_chandata[i].append(float(line[i+1]))
 
                             tp9.append(float(line[0]))
                             tp10.append(float(line[1]))
                             af7.append(float(line[2]))
                             af8.append(float(line[3]))
-                    return [tp9,tp10,af7,af8]
+                    return(str_chandata)
                 except ValueError:
                     print "ValueError"
                     return "file does not exist" # actually does exist but not right format (probably empty)
