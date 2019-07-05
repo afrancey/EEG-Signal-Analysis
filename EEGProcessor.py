@@ -42,37 +42,15 @@ class EEGSet():
                 
                 ang_freqs = 2*np.pi*freqs
 
-                if method == 'lomb':
+                windowLength = 220 # 1 second
+                windowOverlap = 110 # 0.5 seconds overlap
 
-                    pgrams = self.getPeriodograms_SLOW(self.rejectSet, self.timeSteps, self.hammingArray, True, ang_freqs)
-                    bandpowers, relative = self.get_bands(pgrams, freqBins)
-
-                elif method == 'lomb_on_original':
-
-                    fullHamming = signal.hamming(len(self.originalSet[0]), sym=True)
-                    #fullHamming = np.ones(len(self.originalSet[0]))
-                    indicatorArray = np.ones(len(self.originalSet[0]))
-                    timesteps = self.makeTimeSteps(self.Fs, indicatorArray)
-
-                    pgrams = self.getPeriodograms_SLOW(self.originalSet, timesteps, fullHamming, True, ang_freqs)
-                    bandpowers, relative = self.get_bands(pgrams, freqBins)
+                ##################################################################################################3
+                #windowLength = len(self.originalSet[0])/2 # half of signal length
+                #windowOverlap = windowLength/2 # windows overlap by half of their length
                     
-                
-                elif method == 'lombwelch':
-                    windowLength = 220 # 1 second
-                    windowOverlap = 110 # 0.5 seconds overlap
-
-                    windowLength = len(self.originalSet[0])/2 # half of signal length
-                    windowOverlap = windowLength/2 # windows overlap by half of their length
-                    
-                    pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArray, ang_freqs)
-                    bandpowers, relative = 0,0
-                elif method == 'fftignorant':
-                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.rejectSet, len(freqs))
-                    bandpowers, relative = 0,0
-                elif method == 'fftignorant_original':
-                    (fft_freqs, pgrams) = self.getPeriodograms_fftignorant(self.originalSet,len(freqs))
-                    bandpowers, relative = 0,0
+                pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArray, ang_freqs)
+                bandpowers, relative = self.get_bands(pgrams, freqBins)
 
                 return pgrams, bandpowers, relative
 
