@@ -8,12 +8,11 @@ import os
 from EEGProcessor import EEGSet
 import numpy as np
 
-nout = 4*100000 # was way too small at 1000!!
+nout = 4*100000 # What is proper size? Any point in oversampling?
 Fs = 220 # sampling rate
 freqs = np.linspace(float(Fs)/nout, Fs, nout)
 freqs = freqs[0:int(len(freqs)/4.)] # only looking at frequencies 0Hz to 55Hz
-ang_freqs = 2*np.pi*np.linspace(float(Fs)/nout, Fs, nout)
-ang_freqs = ang_freqs[0:int(len(ang_freqs)/4.)]
+ang_freqs = 2*np.pi*freqs
 
 inputpath = "" # folder which contains EEG files
 boundaryfile = "" # path to boundaries
