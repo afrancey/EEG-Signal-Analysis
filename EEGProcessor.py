@@ -109,7 +109,7 @@ class EEGSet():
                     return "file does not exist"
 
 
-        def importEvents(self, eventSetFilename):
+        def importBoundaries(self, sample_boundaries_filename):
 
             # eventset is set of boundaries
             # latency - position of boundary
@@ -117,34 +117,20 @@ class EEGSet():
 
             # file may just contain 'none'
 
-            events = []
+            sample_boundaries = []
 
-            if os.path.isfile(eventSetFilename):
-                    print True
-
-                    with open(eventSetFilename, 'r') as f:
-                        lines = f.readlines()
-
-                        if lines[0] != 'none': # else events stays = [] 
-
-                            # check that all events are boundaries
-                            for letter in lines[1].strip():
-
-                                if letter != 'b':
-                                    print "non-event found"
-                                    return False
+            if os.path.isfile(sample_boundaries_filename):
+                with open(sample_boundaries_filename, 'r') as f:
+                    lines = f.readlines()
+                    for line in lines:
+                        splitline = line.split(",")
+                        if splitline[0] in sample_boundaries_filename:
+                            sample_boundaries = [int(x) for x in splitline[1:]]
 
 
-
-                            for line in lines[3:]:
-                                line = line.strip().split('\t') # latentcy, duration
-
-                                events.append(line)
-
-
-                    return events
+                return(sample_boundaries)
             else:
-                    return "file does not exist"
+                return "file does not exist"
 
 
 
