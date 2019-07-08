@@ -1,5 +1,8 @@
 # filterEEGFiles: use butterworth bandpass filter to filter signal noise
 # filter order: https://dsp.stackexchange.com/questions/37646/filter-order-rule-of-thumb
+# what is filter order?: https://blricrex.hypotheses.org/filtering-introduction
+# high and low bounds? "0.1 or lower and 20 or higher": https://github.com/lucklab/erplab/wiki/Filtering-EEG-and-ERPs
+# "order 4 will be fine" - Frank Boers: https://www.researchgate.net/post/What_type_of_filter_is_best_suitable_for_filtering_EEG_data
 
 # --- PARAMS --- #
 filter_order = 10
