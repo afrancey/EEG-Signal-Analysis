@@ -5,13 +5,13 @@
 # "order 4 will be fine" - Frank Boers: https://www.researchgate.net/post/What_type_of_filter_is_best_suitable_for_filtering_EEG_data
 
 # --- PARAMS --- #
-filter_order = 10
-min_freq = 0.1 # Hz
-max_freq = 40 # Hz
+filter_order = 3
+min_freq = 1 # Hz
+max_freq = 30 # Hz
 f_samp = 220 # sampling rate, Hz
 
-inputdir = "C:/Users/alzfr/Desktop/testeeg"
-outputdir = "C:/Users/alzfr/Desktop/testeegout"
+inputdir = "C:/Users/alzfr/Desktop/ROM EEG"
+outputdir = "C:/Users/alzfr/Desktop/ROM EEG OUT"
 # ---        --- #
 
 import scipy.signal as scisig
