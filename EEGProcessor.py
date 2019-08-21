@@ -6,7 +6,7 @@ import os.path
 
 class EEGSet():
 
-        def __init__(self, originalFilename, rejectFilename, eventsFilename):
+        def __init__(self, originalFilename, eventsFilename):
 
                 self.okayToProcess = False
                 self.error = 'None'
@@ -15,16 +15,13 @@ class EEGSet():
                 
                 self.originalSet = self.importEEGSet(originalFilename)
                 self.rejectSet = self.importEEGSet(rejectFilename)
-                if self.rejectSet != "file does not exist" and self.originalSet != "file does not exist":
+                if self.originalSet != "file does not exist":
                         print "FILE EXISTS"
                         self.events = self.importEvents(eventsFilename)
-                        self.indicatorArray = self.makeIndicatorArray(self.originalSet,self.events, self.rejectSet)
-                        if self.indicatorArray != False and self.TEST_indicator(self.originalSet,self.rejectSet, self.indicatorArray):
-                                self.timeSteps = self.makeTimeSteps(self.Fs, self.indicatorArray)
-                                self.hammingArray = self.makeHammingArray(self.indicatorArray)
-                                self.okayToProcess = True
-                        else:
-                                self.error = 'indicator failure'
+                        self.indicatorArray = self.makeIndicatorArray(self.events, 30)
+                        self.timeSteps = self.makeTimeSteps(self.Fs, self.indicatorArray)
+                        self.hammingArray = self.makeHammingArray(self.indicatorArray)
+                        self.okayToProcess = True
                 else:
                         self.error = 'file failure'
 
@@ -88,10 +85,11 @@ class EEGSet():
 
 
         def importBoundaries(self, sample_boundaries_filename):
-
-            # eventset is set of boundaries
-            # latency - position of boundary
-            # duration - how many samples were rejected
+            # sample boundaries file has lines that look like this:
+            
+            # "name, # # #..., # # #..., # # #..., # # #..."
+            # where commas separate channels.
+            # in aach channel, boundaries come in pairs
 
             # file may just contain 'none'
 
