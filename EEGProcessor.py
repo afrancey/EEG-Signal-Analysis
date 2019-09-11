@@ -11,15 +11,17 @@ class EEGSet():
                 self.okayToProcess = False
                 self.error = 'None'
 
+                self.filename = originalFilename
+
                 self.Fs = 220 #sampling rate of our EEG data
                 
                 self.originalSet = self.importEEGSet(originalFilename)
                 self.rejectSet = self.importEEGSet(rejectFilename)
                 if self.originalSet != "file does not exist":
                         print "FILE EXISTS"
-                        self.events = self.importEvents(eventsFilename)
-                        self.indicatorArray = self.makeIndicatorArray(self.events, 30)
-                        self.timeSteps = self.makeTimeSteps(self.Fs, self.indicatorArray)
+                        self.sample_boundaries = self.importBoundaries(eventsFilename)
+                        self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
+                        self.timeSteps = [self.makeTimeSteps(self.Fs, self.indicatorArrays[ch]) for ch in range(4)]
                         self.hammingArray = self.makeHammingArray(self.indicatorArray)
                         self.okayToProcess = True
                 else:
@@ -89,9 +91,7 @@ class EEGSet():
             
             # "name, # # #..., # # #..., # # #..., # # #..."
             # where commas separate channels.
-            # in aach channel, boundaries come in pairs
-
-            # file may just contain 'none'
+            # in each channel, boundaries come in pairs
 
             sample_boundaries = []
 
@@ -100,8 +100,10 @@ class EEGSet():
                     lines = f.readlines()
                     for line in lines:
                         splitline = line.split(",")
-                        if splitline[0] in sample_boundaries_filename:
-                            sample_boundaries = [int(x) for x in splitline[1:]]
+                        if splitline[0] in self.filename:
+                            # we have found our boundaries in the boundary file
+                            for ch in splitline[1:]:
+                                sample_boundaries.append([int(x) for x in ch.split(" ")])
 
 
                 return(sample_boundaries)
