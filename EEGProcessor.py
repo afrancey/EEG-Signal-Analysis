@@ -74,10 +74,6 @@ class EEGSet():
                             for i in range(4):
                                 str_chandata[i].append(float(line[i+1]))
 
-                            tp9.append(float(line[0]))
-                            tp10.append(float(line[1]))
-                            af7.append(float(line[2]))
-                            af8.append(float(line[3]))
                     return(str_chandata)
                 except ValueError:
                     print("ValueError")
