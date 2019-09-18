@@ -16,7 +16,6 @@ class EEGSet():
                 self.Fs = 220 #sampling rate of our EEG data
                 
                 self.originalSet = self.importEEGSet(originalFilename)
-                self.rejectSet = self.importEEGSet(rejectFilename)
                 if self.originalSet != "file does not exist":
                         print("FILE EXISTS")
                         self.sample_boundaries = self.importBoundaries(eventsFilename)
