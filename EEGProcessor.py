@@ -18,7 +18,7 @@ class EEGSet():
                 self.originalSet = self.importEEGSet(originalFilename)
                 self.rejectSet = self.importEEGSet(rejectFilename)
                 if self.originalSet != "file does not exist":
-                        print "FILE EXISTS"
+                        print("FILE EXISTS")
                         self.sample_boundaries = self.importBoundaries(eventsFilename)
                         self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
                         self.timeSteps = [self.makeTimeSteps(self.Fs, self.indicatorArrays[ch]) for ch in range(4)]
@@ -80,7 +80,7 @@ class EEGSet():
                             af8.append(float(line[3]))
                     return(str_chandata)
                 except ValueError:
-                    print "ValueError"
+                    print("ValueError")
                     return "file does not exist" # actually does exist but not right format (probably empty)
             else:
                     return "file does not exist"
