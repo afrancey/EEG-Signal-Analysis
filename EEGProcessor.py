@@ -97,8 +97,9 @@ class EEGSet():
                         splitline = line.split(",")
                         if splitline[0] in self.filename:
                             # we have found our boundaries in the boundary file
-                            for ch in splitline[1:]:
-                                sample_boundaries.append([int(x) for x in ch.split(" ")])
+                            for chan in splitline[2:]: #first two items in .csv row are taken up by filename in this case (remember extra comma)
+                                boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
+                                sample_boundaries.append(boundaries_int)
 
 
                 return(sample_boundaries)
