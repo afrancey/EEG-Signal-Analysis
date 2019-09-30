@@ -8,12 +8,24 @@ class EEGSet():
 
         def __init__(self, originalFilename, eventsFilename):
 
+                # Chooseable Parameters:
+                HZ_DELTA = 4
+                HZ_THETA = 8
+                HZ_ALPHA = 14
+                HZ_BETA = 30
+                HZ_ALL_BANDS = [HZ_DELTA, HZ_THETA, HZ_ALPHA, HZ_BETA]
+
+                self.Fs = 220 #sampling rate of our EEG data
+                windowLength = 220 # 1 second
+                windowOverlap = 110 # 0.5 seconds overlap
+
+
+                # Begin init
+                                
                 self.okayToProcess = False
                 self.error = 'None'
 
                 self.filename = originalFilename
-
-                self.Fs = 220 #sampling rate of our EEG data
                 
                 self.originalSet = self.importEEGSet(originalFilename)
                 if self.originalSet != "file does not exist":
@@ -29,25 +41,21 @@ class EEGSet():
 
         def process(self, freqs, method = 'lomb'):
 
-                N_freqs = len(freqs)
-                maxFreq = freqs[N_freqs-1]
-                delta_i = (4/maxFreq)*N_freqs #upper bound of delta waves
-                theta_i = (8/maxFreq)*N_freqs
-                alpha_i = (14/maxFreq)*N_freqs
-                beta_i = (30/maxFreq)*N_freqs
-                gamma_i = (50/maxFreq)*N_freqs
-                freqBins = [0,int(delta_i),int(theta_i),int(alpha_i),int(beta_i),int(gamma_i)]
-                
+                # freqs: list of floats. Each item is a frequency at which the Lomb-Scargle periodogram will be evaluated.
+
+                # change to angular frequencies
                 ang_freqs = 2*np.pi*freqs
 
-                windowLength = 220 # 1 second
-                windowOverlap = 110 # 0.5 seconds overlap
+                # calculate periodograms of each channel
+                pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArrays, ang_freqs)
 
-                ##################################################################################################3
-                #windowLength = len(self.originalSet[0])/2 # half of signal length
-                #windowOverlap = windowLength/2 # windows overlap by half of their length
-                    
-                pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArray, ang_freqs)
+                # sum values in each frequency bin
+                # first change HZ_ALL_BANDS into list of freq bin boundary array indices
+                N_freqs = len(freqs)
+                maxFreq = freqs[N_freqs-1]
+                freqBins = [0] + [int((FREQ/maxFreq)*N_freqs) for FREQ in HZ_ALL_BANDS]
+
+                # get powers between each index
                 bandpowers, relative = self.get_bands(pgrams, freqBins)
 
                 return pgrams, bandpowers, relative
