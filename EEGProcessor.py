@@ -21,7 +21,7 @@ class EEGSet():
                         self.sample_boundaries = self.importBoundaries(eventsFilename)
                         self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
                         self.timeSteps = [self.makeTimeSteps(self.Fs, self.indicatorArrays[ch]) for ch in range(4)]
-                        self.hammingArray = self.makeHammingArray(self.indicatorArray)
+                        self.hammingArrays = [self.makeHammingArray(self.indicatorArrays[ch]) for ch in range(4)]
                         self.okayToProcess = True
                 else:
                         self.error = 'file failure'
