@@ -68,7 +68,7 @@ class EEGSet():
 
             if os.path.isfile(EEGSetFilename):
 
-                # first line is "tp9, tp10, af7, af8"
+                # first line is "index,tp9, tp10, af7, af8"
                 # next n lines are the values, in the same order
                 try:
 
@@ -160,7 +160,7 @@ class EEGSet():
 
                 return trimmedHamming
 
-        def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArray, ang_freqs, normalize = True):
+        def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
 
             N = len(indicatorArray)
 
