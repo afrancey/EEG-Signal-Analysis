@@ -182,18 +182,21 @@ class EEGSet():
             pgramSum = np.zeros(len(freqs))
             pgramCount = 0
 
-            for i in range(0,N, windowOverlap):
-                if windowLength + i > N:
-                    # this should be last window
-                    endIndex = N
-                else:
-                    endIndex = i+windowLength
-                    
-                indicator = indicatorArray[i:endIndex]
+            # get periodogram for each window, counting the ending of each window
+            for i in range(self.windowLength,N, windowOverlap):
+
+                # determine sample interval
+                startIndex = i - windowLength
+                endIndex = i - 1
+
+                # get indicator array for this interval
+                indicator = indicatorArray[startIndex:endIndex]
+
+                # check if there are any good samples
                 if sum(indicator) > 0:
-                    # if there are any good samples
-                    samples = ch_array[i:endIndex]
-                    
+
+                    # get interval of samples                      
+                    samples = series[startIndex:endIndex]
                     t = np.array(self.makeTimeSteps(220, indicator))
                     ham = np.array(self.makeHammingArray(indicator))
 
