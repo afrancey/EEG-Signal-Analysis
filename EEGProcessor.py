@@ -169,15 +169,17 @@ class EEGSet():
 
                 return trimmedHamming
 
-        def lomscarglewelch(series, indicatorArray, freqs):
+        def lombscarglewelch(input_series, input_indicatorArray, freqs):
 
-            # Calculates
+            # Calculates the average periodogram over a sequence on overlapping time-windows
 
-            N = len(series) # number of samples
+            # truncate the series and indicatorArray to nearest multiple of windowOverlap
+            N = int(len(input_series)/self.windowOverlap)*self.windowOverlap       
+            series = input_series[0:N - 1]
+            indicatorArray = input_indicatorArray[0:N - 1]
 
-            # First, truncate the series to nearest multiple of windowOverlap
-
-            pgramSum = np.zeros(len(ang_freqs))
+            # we will be element-wise summing periodograms as we go and taking count
+            pgramSum = np.zeros(len(freqs))
             pgramCount = 0
 
             for i in range(0,N, windowOverlap):
