@@ -205,13 +205,11 @@ class EEGSet():
             avgPgram = pgramSum/pgramCount
             return(avgPgram)
                 
-        def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
+        def getPeriodograms_lombwelch(self):
 
             pgrams = []
             for channel in range(len(original)):
-
-                ch_array = np.array(ch)
-                avgPgram = lombscarglewelch(original[channel],indicatorArrays[channel])
+                avgPgram = lombscarglewelch(self.originalSet[channel],self.indicatorArrays[channel])
                 pgrams.append(avgPgram)
             return pgrams
 
