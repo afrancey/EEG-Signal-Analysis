@@ -9,6 +9,8 @@ class EEGSet():
         def __init__(self, originalFilename, eventsFilename):
 
                 # Chooseable Parameters:
+
+                # UPPER BOUNDS of each band
                 HZ_DELTA = 4
                 HZ_THETA = 8 
                 HZ_ALPHA = 14
@@ -18,6 +20,34 @@ class EEGSet():
                 self.Fs = 220 #sampling rate of our EEG data
                 self.windowLength = 220 # 1 second
                 self.windowOverlap = 110 # 0.5 seconds overlap
+
+                self.samplingTime = 60 # seconds
+                self.num_full_samples = self.samplingTime*self.Fs
+
+                # set the frequencies to evaluate
+                # range: because of Nyquist limit, we may sample frequencies up to Fs/2 Hz
+                # grid size: 1/(N * 1/Fs) = Fs/N
+                # freqs = [0, Fs/N, 2Fs/N, 3Fs/N,..., (N-1)Fs/N]
+                # also, ang_freqs = 2*np.pi*freqs
+                # See: 
+                # If
+                # N = num samples,
+                # df = spacing between frequencies in periodogram
+                # dt = time between samples
+                # then we require
+                # df >= 1/(N*dt)
+                # source: Jacob T. VanderPlas, "Understanding the Lomb-Scargle Periodogram", pg 14
+                #           https://arxiv.org/pdf/1703.09824.pdf
+                self.freqs = np.linspace(0, (self.num_samples_full - 1)*self.Fs/self.num_samples_full, self.num_samples_full)
+
+                # cut off freqs at 30 Hz
+                # index at which we hit 30 Hz or more:
+                # freqs[i] = i*Fs/N, 0 <= i <= N-1
+                # we wish for freqs[i] >= 30 Hz
+                # -> i*Fs/N >= 30
+                # -> i >= 30*N/Fs
+                self.freqs = self.freqs[:int(30*self.num_samples_full/self.Fs)]
+
 
                 self.windowTimesteps = np.linspace(0, 1-1/self.windowLength, self.windowLength)
                 self.windowHamming = signal.hamming(self.windowLength, sym=True)
@@ -40,19 +70,14 @@ class EEGSet():
                         self.error = 'file failure'
 
 
-        def process(self, freqs, method = 'lomb'):
-
-                # freqs: list of floats. Each item is a frequency at which the Lomb-Scargle periodogram will be evaluated.
-
-                # change to angular frequencies
-                ang_freqs = 2*np.pi*freqs
+        def process(self):
 
                 # calculate periodograms of each channel
-                pgrams = self.getPeriodograms_lombwelch(self.windowLength, self.windowOverlap, self.originalSet, self.indicatorArrays, ang_freqs)
+                pgrams = self.getPeriodograms_lombwelch()
 
                 # sum values in each frequency bin
                 # first change HZ_ALL_BANDS into list of freq bin boundary array indices
-                N_freqs = len(freqs)
+                N_freqs = len(self.freqs)
                 maxFreq = freqs[N_freqs-1]
                 freqBins = [0] + [int((FREQ/maxFreq)*N_freqs) for FREQ in HZ_ALL_BANDS]
 

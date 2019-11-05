@@ -8,26 +8,6 @@ import os
 from EEGProcessor import EEGSet
 import numpy as np
 
-
-
-nout = 4*100000
-
-# nout = number of evenly-spaced frequencies to evaluate
-# Choosing appropriate nout
-# If
-# N = num samples,
-# df = spacing between frequencies in periodogram
-# dt = time between samples
-# then we require
-# df >= 1/(N*dt)
-# source: Jacob T. VanderPlas, "Understanding the Lomb-Scargle Periodogram", pg 14
-#           https://arxiv.org/pdf/1703.09824.pdf
-                
-Fs = 220 # sampling rate
-freqs = np.linspace(float(Fs)/nout, Fs, nout)
-freqs = freqs[0:int(len(freqs)/4.)] # only looking at frequencies 0Hz to 55Hz
-ang_freqs = 2*np.pi*freqs
-
 inputpath = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
 boundaryfilepath = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
 outputfilepath = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
