@@ -203,8 +203,6 @@ class EEGSet():
                         count += 1
 
                     y = trimmedSamples*ham
-                    y = y - np.mean(y)
-
                     pgram = signal.lombscargle(t,y,ang_freqs)
                     pgramSum = pgramSum + pgram
                     pgramCount += 1
