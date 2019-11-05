@@ -176,7 +176,46 @@ class EEGSet():
             N = len(series) # number of samples
 
             # First, truncate the series to nearest multiple of windowOverlap
+
+            pgramSum = np.zeros(len(ang_freqs))
+            pgramCount = 0
+
+            for i in range(0,N, windowOverlap):
+                if windowLength + i > N:
+                    # this should be last window
+                    endIndex = N
+                else:
+                    endIndex = i+windowLength
+                    
+                indicator = indicatorArray[i:endIndex]
+                if sum(indicator) > 0:
+                    # if there are any good samples
+                    samples = ch_array[i:endIndex]
+                    
+                    t = np.array(self.makeTimeSteps(220, indicator))
+                    ham = np.array(self.makeHammingArray(indicator))
+
+                    trimmedSamples = np.array([])
+                    count = 0
+                    for ind in indicator:
+                        if ind:
+                            trimmedSamples = np.append(trimmedSamples,samples[count])
+                        count += 1
+
+                    y = trimmedSamples*ham
+                    y = y - np.mean(y)
+
+                    pgram = signal.lombscargle(t,y,ang_freqs)
+                    if normalize:
+                        pgram = np.sqrt(4*(pgram/len(pgram)))
+                    pgramSum = pgramSum + pgram
+                    pgramCount += 1
+               #else: no samples within this time window, do nothing
+            avgPgram = pgramSum/pgramCount
             
+            #deprecated: now normalizing intermediate periodograms
+            #if normalize:
+            #    avgPgram = np.sqrt(4*(avgPgram/len(avgPgram)))
                 
         def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
 
@@ -187,45 +226,7 @@ class EEGSet():
 
                 ch_array = np.array(ch)
 
-                pgramSum = np.zeros(len(ang_freqs))
-                pgramCount = 0
 
-                for i in range(0,N, windowOverlap):
-                    if windowLength + i > N:
-                        # this should be last window
-                        endIndex = N
-                    else:
-                        endIndex = i+windowLength
-                        
-                    indicator = indicatorArray[i:endIndex]
-                    if sum(indicator) > 0:
-                        # if there are any good samples
-                        samples = ch_array[i:endIndex]
-                        
-                        t = np.array(self.makeTimeSteps(220, indicator))
-                        ham = np.array(self.makeHammingArray(indicator))
-
-                        trimmedSamples = np.array([])
-                        count = 0
-                        for ind in indicator:
-                            if ind:
-                                trimmedSamples = np.append(trimmedSamples,samples[count])
-                            count += 1
-
-                        y = trimmedSamples*ham
-                        y = y - np.mean(y)
-
-                        pgram = signal.lombscargle(t,y,ang_freqs)
-                        if normalize:
-                            pgram = np.sqrt(4*(pgram/len(pgram)))
-                        pgramSum = pgramSum + pgram
-                        pgramCount += 1
-                   #else: no samples within this time window, do nothing
-                avgPgram = pgramSum/pgramCount
-                
-                #deprecated: now normalizing intermediate periodograms
-                #if normalize:
-                #    avgPgram = np.sqrt(4*(avgPgram/len(avgPgram)))
                     
                 pgrams.append(avgPgram)
             return pgrams
