@@ -10,14 +10,14 @@ class EEGSet():
 
                 # Chooseable Parameters:
                 HZ_DELTA = 4
-                HZ_THETA = 8
+                HZ_THETA = 8 
                 HZ_ALPHA = 14
                 HZ_BETA = 30
                 HZ_ALL_BANDS = [HZ_DELTA, HZ_THETA, HZ_ALPHA, HZ_BETA]
 
                 self.Fs = 220 #sampling rate of our EEG data
-                windowLength = 220 # 1 second
-                windowOverlap = 110 # 0.5 seconds overlap
+                self.windowLength = 220 # 1 second
+                self.windowOverlap = 110 # 0.5 seconds overlap
 
 
                 # Begin init
@@ -47,7 +47,7 @@ class EEGSet():
                 ang_freqs = 2*np.pi*freqs
 
                 # calculate periodograms of each channel
-                pgrams = self.getPeriodograms_lombwelch(windowLength, windowOverlap, self.originalSet, self.indicatorArrays, ang_freqs)
+                pgrams = self.getPeriodograms_lombwelch(self.windowLength, self.windowOverlap, self.originalSet, self.indicatorArrays, ang_freqs)
 
                 # sum values in each frequency bin
                 # first change HZ_ALL_BANDS into list of freq bin boundary array indices
@@ -159,6 +159,60 @@ class EEGSet():
                                 trimmedHamming.append(fullHamming[sampleNum])
 
                 return trimmedHamming
+
+        def getPeriodogram():
+                
+        def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
+
+            N = len(indicatorArray)
+
+            pgrams = []
+            for ch in original:
+
+                ch_array = np.array(ch)
+
+                pgramSum = np.zeros(len(ang_freqs))
+                pgramCount = 0
+
+                for i in range(0,N, windowOverlap):
+                    if windowLength + i > N:
+                        # this should be last window
+                        endIndex = N
+                    else:
+                        endIndex = i+windowLength
+                        
+                    indicator = indicatorArray[i:endIndex]
+                    if sum(indicator) > 0:
+                        # if there are any good samples
+                        samples = ch_array[i:endIndex]
+                        
+                        t = np.array(self.makeTimeSteps(220, indicator))
+                        ham = np.array(self.makeHammingArray(indicator))
+
+                        trimmedSamples = np.array([])
+                        count = 0
+                        for ind in indicator:
+                            if ind:
+                                trimmedSamples = np.append(trimmedSamples,samples[count])
+                            count += 1
+
+                        y = trimmedSamples*ham
+                        y = y - np.mean(y)
+
+                        pgram = signal.lombscargle(t,y,ang_freqs)
+                        if normalize:
+                            pgram = np.sqrt(4*(pgram/len(pgram)))
+                        pgramSum = pgramSum + pgram
+                        pgramCount += 1
+                   #else: no samples within this time window, do nothing
+                avgPgram = pgramSum/pgramCount
+                
+                #deprecated: now normalizing intermediate periodograms
+                #if normalize:
+                #    avgPgram = np.sqrt(4*(avgPgram/len(avgPgram)))
+                    
+                pgrams.append(avgPgram)
+            return pgrams
 
         def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
 
