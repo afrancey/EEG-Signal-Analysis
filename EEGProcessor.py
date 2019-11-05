@@ -35,7 +35,6 @@ class EEGSet():
                         print("FILE EXISTS")
                         self.sample_boundaries = self.importBoundaries(eventsFilename)
                         self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
-                        self.timeSteps = [self.makeTimeSteps(self.Fs, len(self.originalSet[ch]) for ch in range(4)]
                         self.okayToProcess = True
                 else:
                         self.error = 'file failure'
@@ -138,20 +137,6 @@ class EEGSet():
                     np.append(trimmedSeries,nparray[count])
 
             return(trimmedSeries)
-
-        def makeTimeSteps(self, Fs, indicatorArray):
-
-            h = 1./Fs
-
-            time = 0
-            times = []
-
-            for indicator in indicatorArray:
-                time += h
-                if indicator == 1:
-                        times.append(time)
-
-            return times
         
         def makeIndicatorArray(self, sample_bounds, size):
             indicatorArray = []
@@ -169,19 +154,6 @@ class EEGSet():
                     indicatorArray.append(1)
                     
             return indicatorArray
-
-        def makeHammingArray(self, indicatorArray):
-
-                numSamples = len(indicatorArray)
-                fullHamming = signal.hamming(numSamples, sym=True)
-
-                trimmedHamming = []
-                for sampleNum in range(len(indicatorArray)):
-                        indicator = indicatorArray[sampleNum]
-                        if indicator == 1:
-                                trimmedHamming.append(fullHamming[sampleNum])
-
-                return trimmedHamming
 
         def lombscarglewelch(input_series, input_indicatorArray, freqs):
 
