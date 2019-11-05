@@ -32,8 +32,7 @@ class EEGSet():
                         print("FILE EXISTS")
                         self.sample_boundaries = self.importBoundaries(eventsFilename)
                         self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
-                        self.timeSteps = [self.makeTimeSteps(self.Fs, self.indicatorArrays[ch]) for ch in range(4)]
-                        self.hammingArrays = [self.makeHammingArray(self.indicatorArrays[ch]) for ch in range(4)]
+                        self.timeSteps = [self.makeTimeSteps(self.Fs, len(self.originalSet[ch]) for ch in range(4)]
                         self.okayToProcess = True
                 else:
                         self.error = 'file failure'
@@ -172,9 +171,11 @@ class EEGSet():
 
         def lomscarglewelch(series, indicatorArray, freqs):
 
+            # Calculates
+
             N = len(series) # number of samples
 
-            
+            # First, truncate the series to nearest multiple of windowOverlap
             
                 
         def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
@@ -229,7 +230,7 @@ class EEGSet():
                 pgrams.append(avgPgram)
             return pgrams
 
-        def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
+        def getPeriodograms_lombwelch_OLD(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
 
             N = len(indicatorArray)
 
