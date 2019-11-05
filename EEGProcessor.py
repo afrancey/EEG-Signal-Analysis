@@ -206,16 +206,10 @@ class EEGSet():
                     y = y - np.mean(y)
 
                     pgram = signal.lombscargle(t,y,ang_freqs)
-                    if normalize:
-                        pgram = np.sqrt(4*(pgram/len(pgram)))
                     pgramSum = pgramSum + pgram
                     pgramCount += 1
                #else: no samples within this time window, do nothing
             avgPgram = pgramSum/pgramCount
-            
-            #deprecated: now normalizing intermediate periodograms
-            #if normalize:
-            #    avgPgram = np.sqrt(4*(avgPgram/len(avgPgram)))
                 
         def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
 
