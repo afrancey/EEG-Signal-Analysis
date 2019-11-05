@@ -115,6 +115,16 @@ class EEGSet():
                 return "file does not exist"
 
 
+        def trim(self, series, indicatorArray):
+            # trims a list (series) according to indicatorArray
+            # series: time series whose interval matches up with indicatorArray
+
+            trimmedSeries = []
+            for count in len(indicatorArray):
+                if indicatorArray[count] == 1:
+                    trimmedSeries.append(series[count])
+
+            return(trimmedSeries)
 
         def makeTimeSteps(self, Fs, indicatorArray):
 
@@ -160,7 +170,12 @@ class EEGSet():
 
                 return trimmedHamming
 
-        def getPeriodogram():
+        def lomscarglewelch(series, indicatorArray, freqs):
+
+            N = len(series) # number of samples
+
+            
+            
                 
         def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
 
