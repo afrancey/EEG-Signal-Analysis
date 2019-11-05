@@ -19,6 +19,9 @@ class EEGSet():
                 self.windowLength = 220 # 1 second
                 self.windowOverlap = 110 # 0.5 seconds overlap
 
+                self.windowTimesteps = np.linspace(0, 1-1/self.windowLength, self.windowLength)
+                self.windowHamming = signal.hamming(self.windowLength, sym=True)
+
 
                 # Begin init
                                 
@@ -125,6 +128,17 @@ class EEGSet():
 
             return(trimmedSeries)
 
+        def trim_nparray(self, nparray, indicatorArray):
+            # trims a list (series) according to indicatorArray
+            # series: time series whose interval matches up with indicatorArray
+
+            trimmedSeries = np.array([])
+            for count in len(indicatorArray):
+                if indicatorArray[count] == 1:
+                    np.append(trimmedSeries,nparray[count])
+
+            return(trimmedSeries)
+
         def makeTimeSteps(self, Fs, indicatorArray):
 
             h = 1./Fs
@@ -196,35 +210,36 @@ class EEGSet():
                 if sum(indicator) > 0:
 
                     # get interval of samples                      
-                    samples = series[startIndex:endIndex]
-                    t = np.array(self.makeTimeSteps(220, indicator))
-                    ham = np.array(self.makeHammingArray(indicator))
+                    samples = np.array(series[startIndex:endIndex])
 
-                    trimmedSamples = np.array([])
-                    count = 0
-                    for ind in indicator:
-                        if ind:
-                            trimmedSamples = np.append(trimmedSamples,samples[count])
-                        count += 1
+                    # trim the relevant arrays
+                    t = self.trim_nparray(self.windowTimesteps,indicator)
+                    ham = self.trim_nparray(self.windowHamming,indicator)
+                    trimmedSamples = self.trim_nparray(samples,indicator)
 
+                    # apply Hamming window element-wise
                     y = trimmedSamples*ham
+
+                    # calculate periodogram
                     pgram = signal.lombscargle(t,y,ang_freqs)
+
+                    # add to running sums
                     pgramSum = pgramSum + pgram
                     pgramCount += 1
+                                          
                #else: no samples within this time window, do nothing
+
+            # find average periodogram
             avgPgram = pgramSum/pgramCount
+            return(avgPgram)
                 
         def getPeriodograms_lombwelch(self, windowLength, windowOverlap, original, indicatorArrays, ang_freqs, normalize = True):
 
-            N = len(indicatorArray)
-
             pgrams = []
-            for ch in original:
+            for channel in range(len(original)):
 
                 ch_array = np.array(ch)
-
-
-                    
+                avgPgram = lombscarglewelch(original[channel],indicatorArrays[channel])
                 pgrams.append(avgPgram)
             return pgrams
 
