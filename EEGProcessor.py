@@ -62,29 +62,29 @@ class EEGSet():
         
         self.originalSet = self.importEEGSet(originalFilename)
         if self.originalSet != "file does not exist":
-                print("FILE EXISTS")
-                self.sample_boundaries = self.importBoundaries(eventsFilename)
-                self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
-                self.okayToProcess = True
+            print("FILE EXISTS")
+            self.sample_boundaries = self.importBoundaries(eventsFilename)
+            self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
+            self.okayToProcess = True
         else:
-                self.error = 'file failure'
+            self.error = 'file failure'
 
 
     def process(self):
 
-            # calculate periodograms of each channel
-            pgrams = self.getPeriodograms_lombwelch()
+        # calculate periodograms of each channel
+        pgrams = self.getPeriodograms_lombwelch()
 
-            # sum values in each frequency bin
-            # first change HZ_ALL_BANDS into list of freq bin boundary array indices
-            N_freqs = len(self.freqs)
-            maxFreq = self.freqs[N_freqs-1]
-            freqBins = [0] + [int((FREQ/maxFreq)*N_freqs) for FREQ in self.HZ_ALL_BANDS]
+        # sum values in each frequency bin
+        # first change HZ_ALL_BANDS into list of freq bin boundary array indices
+        N_freqs = len(self.freqs)
+        maxFreq = self.freqs[N_freqs-1]
+        freqBins = [0] + [int((FREQ/maxFreq)*N_freqs) for FREQ in self.HZ_ALL_BANDS]
 
-            # get powers between each index
-            bandpowers, relative = self.get_bands(pgrams, freqBins)
+        # get powers between each index
+        bandpowers, relative = self.get_bands(pgrams, freqBins)
 
-            return pgrams, bandpowers, relative
+        return pgrams, bandpowers, relative
 
     def importEEGSet(self, EEGSetFilename):
 
@@ -112,7 +112,7 @@ class EEGSet():
                 print("ValueError")
                 return "file does not exist" # actually does exist but not right format (probably empty)
         else:
-                return "file does not exist"
+            return "file does not exist"
 
 
     def importBoundaries(self, sample_boundaries_filename):
