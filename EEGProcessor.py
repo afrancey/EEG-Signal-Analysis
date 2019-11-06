@@ -22,7 +22,7 @@ class EEGSet():
                 self.windowOverlap = 110 # 0.5 seconds overlap
 
                 self.samplingTime = 60 # seconds
-                self.num_full_samples = self.samplingTime*self.Fs
+                self.num_samples_full = self.samplingTime*self.Fs
 
                 # set the frequencies to evaluate
                 # range: because of Nyquist limit, we may sample frequencies up to Fs/2 Hz
@@ -180,7 +180,7 @@ class EEGSet():
                     
             return indicatorArray
 
-        def lombscarglewelch(input_series, input_indicatorArray, freqs):
+        def lombscarglewelch(self, input_series, input_indicatorArray):
 
             # Calculates the average periodogram over a sequence on overlapping time-windows
 
@@ -190,14 +190,14 @@ class EEGSet():
             indicatorArray = input_indicatorArray[0:N - 1]
 
             # we will be element-wise summing periodograms as we go and taking count
-            pgramSum = np.zeros(len(freqs))
+            pgramSum = np.zeros(len(self.freqs))
             pgramCount = 0
 
             # get periodogram for each window, counting the ending of each window
-            for i in range(self.windowLength,N, windowOverlap):
+            for i in range(self.windowLength,N, self.windowOverlap):
 
                 # determine sample interval
-                startIndex = i - windowLength
+                startIndex = i - self.windowLength
                 endIndex = i - 1
 
                 # get indicator array for this interval
@@ -233,8 +233,8 @@ class EEGSet():
         def getPeriodograms_lombwelch(self):
 
             pgrams = []
-            for channel in range(len(original)):
-                avgPgram = lombscarglewelch(self.originalSet[channel],self.indicatorArrays[channel])
+            for channel in range(len(self.originalSet)):
+                avgPgram = self.lombscarglewelch(self.originalSet[channel],self.indicatorArrays[channel])
                 pgrams.append(avgPgram)
             return pgrams
 

@@ -22,7 +22,7 @@ for filename in os.listdir(inputpath):
 
         print("Calculating periodograms for file: " + filename)
         eset = EEGSet(inputpath + filename, boundaryfilepath)
-        pgrams, bandpowers, relative = eset.process(freqs)
+        pgrams, bandpowers, relative = eset.process()
 
         stringToWrite+= filename + ","
 
