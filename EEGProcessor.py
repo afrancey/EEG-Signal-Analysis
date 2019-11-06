@@ -15,7 +15,7 @@ class EEGSet():
                 HZ_THETA = 8 
                 HZ_ALPHA = 14
                 HZ_BETA = 30
-                HZ_ALL_BANDS = [HZ_DELTA, HZ_THETA, HZ_ALPHA, HZ_BETA]
+                self.HZ_ALL_BANDS = [HZ_DELTA, HZ_THETA, HZ_ALPHA, HZ_BETA]
 
                 self.Fs = 220 #sampling rate of our EEG data
                 self.windowLength = 220 # 1 second
@@ -78,8 +78,8 @@ class EEGSet():
                 # sum values in each frequency bin
                 # first change HZ_ALL_BANDS into list of freq bin boundary array indices
                 N_freqs = len(self.freqs)
-                maxFreq = freqs[N_freqs-1]
-                freqBins = [0] + [int((FREQ/maxFreq)*N_freqs) for FREQ in HZ_ALL_BANDS]
+                maxFreq = self.freqs[N_freqs-1]
+                freqBins = [0] + [int((FREQ/maxFreq)*N_freqs) for FREQ in self.HZ_ALL_BANDS]
 
                 # get powers between each index
                 bandpowers, relative = self.get_bands(pgrams, freqBins)
@@ -210,7 +210,6 @@ class EEGSet():
                     samples = np.array(series[startIndex:endIndex])
 
                     # trim the relevant arrays
-                    print(indicator)
                     t = self.trim_nparray(self.windowTimesteps,indicator)
                     ham = self.trim_nparray(self.windowHamming,indicator)
                     trimmedSamples = self.trim_nparray(samples,indicator)
@@ -312,8 +311,8 @@ class EEGSet():
 
             for i in range(4):
                 pgram = pgrams[i]
-                for j in range(5):
-                    
+                for j in range(len(freqBins) - 1):
+
                     band = pgram[freqBins[j]:freqBins[j+1]]
                     bandsum = sum(band)
                     out[i][j] = bandsum
