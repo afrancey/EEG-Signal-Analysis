@@ -157,7 +157,7 @@ class EEGSet():
             # series: time series whose interval matches up with indicatorArray
 
             trimmedSeries = np.array([])
-            for count in len(indicatorArray):
+            for count in range(len(indicatorArray)):
                 if indicatorArray[count] == 1:
                     np.append(trimmedSeries,nparray[count])
 
@@ -210,6 +210,7 @@ class EEGSet():
                     samples = np.array(series[startIndex:endIndex])
 
                     # trim the relevant arrays
+                    print(indicator)
                     t = self.trim_nparray(self.windowTimesteps,indicator)
                     ham = self.trim_nparray(self.windowHamming,indicator)
                     trimmedSamples = self.trim_nparray(samples,indicator)
@@ -218,7 +219,13 @@ class EEGSet():
                     y = trimmedSamples*ham
 
                     # calculate periodogram
-                    pgram = signal.lombscargle(t,y,ang_freqs)
+
+                    # to do: change to using astroML
+                    ###########################################
+                    # pgram = signal.lombscargle(t,y,ang_freqs)
+                    # HACK
+                    pgram = np.zeros(len(self.freqs))
+                    ##########################################
 
                     # add to running sums
                     pgramSum = pgramSum + pgram
