@@ -1,5 +1,7 @@
 # processes EEG files
 
+# TO-DO: match analysed data with time of inspection (ie. the last minute of file)
+
 import scipy.signal as signal
 import numpy as np
 import os.path
