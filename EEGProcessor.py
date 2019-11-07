@@ -83,14 +83,8 @@ class EEGSet():
         # calculate periodograms of each channel
         pgrams = self.getPeriodograms_lombwelch()
 
-        # sum values in each frequency bin
-        # first change HZ_ALL_BANDS into list of freq bin boundary array indices
-        N_freqs = len(self.freqs)
-        maxFreq = self.freqs[N_freqs-1]
-        freqBins = [1] + [int((FREQ/maxFreq)*N_freqs) for FREQ in self.HZ_ALL_BANDS]
-
         # get powers between each index
-        bandpowers, relative = self.get_bands(pgrams, freqBins)
+        bandpowers, relative = self.get_bands(pgrams)
 
         return pgrams, bandpowers, relative
 
@@ -305,7 +299,7 @@ class EEGSet():
             pgrams.append(avgPgram)
         return pgrams
 
-    def get_bands(self, pgrams, freqBins):
+    def get_bands(self, pgrams):
 
         # out[i][j] = band power at channel i band j
         out = [[0,0,0,0,0], #tp9
@@ -320,9 +314,9 @@ class EEGSet():
 
         for i in range(4):
             pgram = pgrams[i]
-            for j in range(len(freqBins) - 1):
+            for j in range(len(self.band_boundary_indices) - 1):
 
-                band = pgram[freqBins[j]:freqBins[j+1]]
+                band = pgram[self.band_boundary_indices[j]:self.band_boundary_indices[j+1]]
                 bandsum = sum(band)
                 out[i][j] = bandsum
 
