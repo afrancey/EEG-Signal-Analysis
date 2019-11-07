@@ -4,6 +4,7 @@ import scipy.signal as signal
 import numpy as np
 import os.path
 import os
+from astropy.timeseries import LombScargle
 
 class EEGSet():
 
@@ -160,7 +161,7 @@ class EEGSet():
         trimmedSeries = np.array([])
         for count in range(len(indicatorArray)):
             if indicatorArray[count] == 1:
-                np.append(trimmedSeries,nparray[count])
+                trimmedSeries = np.append(trimmedSeries,nparray[count])
 
         return(trimmedSeries)
     
@@ -222,9 +223,13 @@ class EEGSet():
 
                 # to do: change to using astroML
                 ###########################################
-                # pgram = signal.lombscargle(t,y,ang_freqs)
+                print(self.windowTimesteps)
+                print(t)
+                print(y)
+                
+                pgram = LombScargle(t, y).power(self.freqs)
                 # HACK
-                pgram = np.zeros(len(self.freqs))
+                # pgram = np.zeros(len(self.freqs))
                 ##########################################
 
                 # add to running sums
@@ -319,6 +324,7 @@ class EEGSet():
                 out[i][j] = bandsum
 
             for j in range(5):
+                print(out[i][j])
                 relative[i][j] = float(out[i][j])/sum(out[i])
 
         return out, relative
@@ -329,10 +335,6 @@ if __name__ == '__main__':
 
     #https://stackoverflow.com/questions/24702807/lomb-scargle-vs-fft-power-spectrum-crashes-with-evenly-spaced-data/
     #lol
-
-    import os
-    from EEGProcessor import EEGSet
-    import numpy as np
 
     inputpath = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
     boundaryfilepath = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
