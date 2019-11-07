@@ -306,9 +306,15 @@ class EEGSet():
         # out[i][j] = band power at channel i band j
         # i = tp9,tp10,af7,af8
 
-        out = [[0]*(len(self.band_boundary_indices) - 1)]*4
+        out = [[0,0,0,0],
+               [0,0,0,0],
+               [0,0,0,0],
+               [0,0,0,0]]
 
-        relative = [[0]*(len(self.band_boundary_indices) - 1)]*4
+        relative = [[0,0,0,0],
+               [0,0,0,0],
+               [0,0,0,0],
+               [0,0,0,0]]
 
         for i in range(4): # 4 channels
             pgram = pgrams[i]
