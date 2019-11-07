@@ -302,26 +302,19 @@ class EEGSet():
     def get_bands(self, pgrams):
 
         # out[i][j] = band power at channel i band j
-        out = [[0,0,0,0,0], #tp9
-               [0,0,0,0,0], #tp10
-               [0,0,0,0,0], #af7
-               [0,0,0,0,0]] #af8
+        # i = tp9,tp10,af7,af8
 
-        relative = [[0,0,0,0,0],
-               [0,0,0,0,0],
-               [0,0,0,0,0],
-               [0,0,0,0,0]]
+        out = [[0]*(len(self.band_boundary_indices) - 1)]*4
 
-        for i in range(4):
+        relative = [[0]*(len(self.band_boundary_indices) - 1)]*4
+
+        for i in range(4): # 4 channels
             pgram = pgrams[i]
             for j in range(len(self.band_boundary_indices) - 1):
 
-                band = pgram[self.band_boundary_indices[j]:self.band_boundary_indices[j+1]]
-                bandsum = sum(band)
-                out[i][j] = bandsum
+                out[i][j] = sum(pgram[self.band_boundary_indices[j]:self.band_boundary_indices[j+1]])
 
             for j in range(5):
-                print(out[i][j])
                 relative[i][j] = float(out[i][j])/sum(out[i])
 
         return out, relative
