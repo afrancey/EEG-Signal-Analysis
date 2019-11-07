@@ -26,9 +26,6 @@ class EEGSet():
         self.windowLength = 220 # 1 second
         self.windowOverlap = 110 # 0.5 seconds overlap
 
-        self.samplingTime = 60 # seconds
-        self.num_samples_full = self.samplingTime*self.Fs
-
         # set the frequencies to evaluate
         # grid size: 1/(N * 1/Fs) = Fs/N
         # freqs = [Fs/N, 2Fs/N, 3Fs/N,..., (N-1)Fs/N], freqs[i] = Fs/N + i*Fs/N
@@ -44,7 +41,10 @@ class EEGSet():
         # df >= 1/(N*dt)
         # source: Jacob T. VanderPlas, "Understanding the Lomb-Scargle Periodogram", pg 14
         #           https://arxiv.org/pdf/1703.09824.pdf
-        self.freqs = np.linspace(self.Fs/self.num_samples_full, self.Fs, self.num_samples_full)
+
+        # NOTE: use size of windows to determine frequency grid!
+        self.gridspacing = self.Fs/self.windowLength
+        self.freqs = np.linspace(self.gridspacing, self.Fs, self.windowLength)
 
         # find i such that freqs[i] = X Hz
         # -> Fs/N + i*Fs/N = X
@@ -53,11 +53,14 @@ class EEGSet():
         # otherwise, floor(i) = f == greatest int such that freqs[f] < X
         # and ceil(i) = c == lowest int such that freqs[c] > X
 
+        # if Fs/N = g
+        # then i = (X-g)/g
+
         # cut off array at 31, we will not be evaluating other frequencies
-        self.freqs = self.freqs[:int((31 - self.Fs/self.num_samples_full)*self.num_samples_full/self.Fs)]
+        self.freqs = self.freqs[:int((31 - self.gridspacing)/self.gridspacing)]
         
         # find band boundary indices based on freqs
-        self.band_boundary_indices = [int((HZ - self.Fs/self.num_samples_full)*self.num_samples_full/self.Fs) for HZ in self.HZ_BAND_BOUNDARIES]
+        self.band_boundary_indices = [int((HZ - self.gridspacing)/self.gridspacing) for HZ in self.HZ_BAND_BOUNDARIES]
 
         self.windowTimesteps = np.linspace(0, 1-1/self.windowLength, self.windowLength)
         self.windowHamming = signal.hamming(self.windowLength, sym=True)
