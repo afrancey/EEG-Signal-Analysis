@@ -45,10 +45,19 @@ class EEGSet():
         # cut off freqs at 30 Hz
         # index at which we hit 30 Hz or more:
         # freqs[i] = i*Fs/N, 0 <= i <= N-1
-        # we wish for freqs[i] >= 30 Hz
+        # we wish for 1Hz >= freqs[i] >= 30 Hz
+
+        # for 1 Hz
+        # -> i*Fs/N <= 30
+        # -> i >= N/Fs
+
+        # for 30 Hz
         # -> i*Fs/N >= 30
         # -> i >= 30*N/Fs
-        self.freqs = self.freqs[:int(30*self.num_samples_full/self.Fs)]
+
+        #self.freqs = np.array([0])
+        self.freqs = self.freqs[int(self.num_samples_full/self.Fs):int(30*self.num_samples_full/self.Fs)]
+        print(self.freqs)
 
 
         self.windowTimesteps = np.linspace(0, 1-1/self.windowLength, self.windowLength)
@@ -81,7 +90,7 @@ class EEGSet():
         # first change HZ_ALL_BANDS into list of freq bin boundary array indices
         N_freqs = len(self.freqs)
         maxFreq = self.freqs[N_freqs-1]
-        freqBins = [0] + [int((FREQ/maxFreq)*N_freqs) for FREQ in self.HZ_ALL_BANDS]
+        freqBins = [1] + [int((FREQ/maxFreq)*N_freqs) for FREQ in self.HZ_ALL_BANDS]
 
         # get powers between each index
         bandpowers, relative = self.get_bands(pgrams, freqBins)
@@ -223,9 +232,6 @@ class EEGSet():
 
                 # to do: change to using astroML
                 ###########################################
-                print(self.windowTimesteps)
-                print(t)
-                print(y)
                 
                 pgram = LombScargle(t, y).power(self.freqs)
                 # HACK
@@ -357,8 +363,6 @@ if __name__ == '__main__':
             #relative[i][j] = band power at channel i band j
             
             for band in range(0,5):
-                print("help")
-                
                 stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
                                          
     #print("time: " + str(time.time() - startTime))
