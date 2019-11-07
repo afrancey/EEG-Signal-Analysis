@@ -1,4 +1,7 @@
 # Unit Testing for EEG Processor
+import numpy as np
+from EEGProcessor import EEGSet
+import os
 
 # make files
 
@@ -8,35 +11,28 @@
 # last channel has boundaries spread out
 
 time_points = np.linspace(0, 60 - 1/220, 60*220)
-data_points = np.append(np.sin(2*np.pi*5*time_points[0:20*220]),
-                        np.sin(2*np.pi*10*time_points[20*220:40*220]),
-                        np.sin(2*np.pi*20*time_points[40*220:60*220]))
+data_points = np.append(np.sin(2*np.pi*5*time_points[0:20*220]), np.append(np.sin(2*np.pi*10*time_points[20*220:40*220]),np.sin(2*np.pi*20*time_points[40*220:60*220])))
 
 # make participant file
-with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/sine,sine.txt", "w") as f:
+with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/EEGsine,sine.txt", "w") as f:
     f.write("index\ttp9\ttp10\tfp1\tfp2\n")
     stringtowrite = ""
     for i in range(len(time_points)):
-        stringtowrite+=str(i) + "\t"
-                        + time_points[i] + "\t"
-                        + data_points[i] + "\t"
-                        + data_points[i] + "\t"
-                        + data_points[i] + "\t"
-                        + data_points[i] + "\n"
+        stringtowrite+=str(i) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\n"
     f.write(stringtowrite)
         
 
-boundaries = ["sine,sine.txt,0 8800 ,0 4400 8800 13200 ,8800 13200 ,400 600 2746 3422 7882 8999 9032 10000 "]
+boundaries = ["EEGsine,sine.txt,0 8800 ,0 4400 8800 13200 ,8800 13200 ,400 600 2746 3422 7882 8999 9032 10000 "]
 # make boundaries file
-with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/boundstest.txt", "w") as f:
+with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/boundstest.csv", "w") as f:
     for i in boundaries:
         f.write(i + "\n")
 
 
 
-inputpath = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
-boundaryfilepath = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
-outputfilepath = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
+inputpath = "C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/" # folder which contains EEG files
+boundaryfilepath = "C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/boundstest.csv" # path to boundaries
+outputfilepath = "C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/output.csv"
 
 stringToWrite = ""
 
@@ -50,12 +46,9 @@ for filename in os.listdir(inputpath):
         eset = EEGSet(inputpath + filename, boundaryfilepath)
         pgrams, bandpowers, relative = eset.process()
 
-        stringToWrite+= filename + ","
+        print(bandpowers)
+    
 
-        #relative[i][j] = band power at channel i band j
-        
-        for band in range(0,5):
-            stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
                                      
 #print("time: " + str(time.time() - startTime))
 #print(freqs)
