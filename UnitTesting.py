@@ -22,7 +22,7 @@ with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered fil
     f.write(stringtowrite)
         
 
-boundaries = ["EEGsine,sine.txt,0 8800 ,0 4400 8800 13200 ,8800 13200 ,400 600 2746 3422 7882 8999 9032 10000 "]
+boundaries = ["EEGsine,sine.txt,0 8800 ,0 4400 8800 13200 ,4400 13200 ,400 600 2746 3422 7882 8999 9032 10000 "]
 # make boundaries file
 with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/boundstest.csv", "w") as f:
     for i in boundaries:
@@ -46,7 +46,18 @@ for filename in os.listdir(inputpath):
         eset = EEGSet(inputpath + filename, boundaryfilepath)
         pgrams, bandpowers, relative = eset.process()
 
-        print(bandpowers)
+        # Test output
+        print("Band Order: delta, theta, alpha, beta")
+        print("EEGsine")
+        print("Channel 1: Expect to see large beta")
+        print(bandpowers[0])
+        print("Channel 2: Expect to see large alpha")
+        print(bandpowers[1])
+        print("Channel 3: Expect to see large theta")
+        print(bandpowers[2])
+        print("Channel 4: Expect to see a mix")
+        print(bandpowers[3])
+        
     
 
                                      
