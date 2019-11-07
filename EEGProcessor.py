@@ -13,11 +13,12 @@ class EEGSet():
         # Chooseable Parameters:
         
         # UPPER BOUNDS of each band
+        HZ_MIN = 1
         HZ_DELTA = 4
         HZ_THETA = 8 
         HZ_ALPHA = 14
         HZ_BETA = 30
-        self.HZ_ALL_BANDS = [HZ_DELTA, HZ_THETA, HZ_ALPHA, HZ_BETA]
+        self.HZ_BAND_BOUNDARIES = [HZ_MIN, HZ_DELTA, HZ_THETA, HZ_ALPHA, HZ_BETA]
 
         self.Fs = 220 #sampling rate of our EEG data
         self.windowLength = 220 # 1 second
@@ -27,11 +28,12 @@ class EEGSet():
         self.num_samples_full = self.samplingTime*self.Fs
 
         # set the frequencies to evaluate
-        # range: because of Nyquist limit, we may sample frequencies up to Fs/2 Hz
         # grid size: 1/(N * 1/Fs) = Fs/N
-        # freqs = [0, Fs/N, 2Fs/N, 3Fs/N,..., (N-1)Fs/N]
+        # freqs = [Fs/N, 2Fs/N, 3Fs/N,..., (N-1)Fs/N], freqs[i] = Fs/N + i*Fs/N
+        # Note: we start at Fs/N because of computation problems at 0
         # also, ang_freqs = 2*np.pi*freqs
-        # See: 
+        # extra note: nyquist frequency = 110 Hz but we don't go up that far anyway
+        # CITE: 
         # If
         # N = num samples,
         # df = spacing between frequencies in periodogram
@@ -40,25 +42,20 @@ class EEGSet():
         # df >= 1/(N*dt)
         # source: Jacob T. VanderPlas, "Understanding the Lomb-Scargle Periodogram", pg 14
         #           https://arxiv.org/pdf/1703.09824.pdf
-        self.freqs = np.linspace(0, (self.num_samples_full - 1)*self.Fs/self.num_samples_full, self.num_samples_full)
+        self.freqs = np.linspace(self.Fs/self.num_samples_full, self.Fs, self.num_samples_full)
 
-        # cut off freqs at 30 Hz
-        # index at which we hit 30 Hz or more:
-        # freqs[i] = i*Fs/N, 0 <= i <= N-1
-        # we wish for 1Hz >= freqs[i] >= 30 Hz
+        # find i such that freqs[i] = X Hz
+        # -> Fs/N + i*Fs/N = X
+        # -> i = (X - Fs/N)*N/Fs
+        # if i is integer, we have freqs[i] == X
+        # otherwise, floor(i) = f == greatest int such that freqs[f] < X
+        # and ceil(i) = c == lowest int such that freqs[c] > X
 
-        # for 1 Hz
-        # -> i*Fs/N <= 30
-        # -> i >= N/Fs
-
-        # for 30 Hz
-        # -> i*Fs/N >= 30
-        # -> i >= 30*N/Fs
-
-        #self.freqs = np.array([0])
-        self.freqs = self.freqs[int(self.num_samples_full/self.Fs):int(30*self.num_samples_full/self.Fs)]
-        print(self.freqs)
-
+        # cut off array at 31, we will not be evaluating other frequencies
+        self.freqs = self.freqs[:int((31 - self.Fs/self.num_samples_full)*self.num_samples_full/self.Fs)]
+        
+        # find band boundary indices based on freqs
+        self.band_boundary_indices = [(HZ - self.Fs/self.num_samples_full)*num_samples_full/self.Fs for HZ in self.HZ_BAND_BOUNDARIES]
 
         self.windowTimesteps = np.linspace(0, 1-1/self.windowLength, self.windowLength)
         self.windowHamming = signal.hamming(self.windowLength, sym=True)
