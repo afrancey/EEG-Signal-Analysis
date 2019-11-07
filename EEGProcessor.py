@@ -55,7 +55,7 @@ class EEGSet():
         self.freqs = self.freqs[:int((31 - self.Fs/self.num_samples_full)*self.num_samples_full/self.Fs)]
         
         # find band boundary indices based on freqs
-        self.band_boundary_indices = [(HZ - self.Fs/self.num_samples_full)*num_samples_full/self.Fs for HZ in self.HZ_BAND_BOUNDARIES]
+        self.band_boundary_indices = [int((HZ - self.Fs/self.num_samples_full)*self.num_samples_full/self.Fs) for HZ in self.HZ_BAND_BOUNDARIES]
 
         self.windowTimesteps = np.linspace(0, 1-1/self.windowLength, self.windowLength)
         self.windowHamming = signal.hamming(self.windowLength, sym=True)
@@ -314,7 +314,7 @@ class EEGSet():
 
                 out[i][j] = sum(pgram[self.band_boundary_indices[j]:self.band_boundary_indices[j+1]])
 
-            for j in range(5):
+            for j in range(len(self.band_boundary_indices) - 1):
                 relative[i][j] = float(out[i][j])/sum(out[i])
 
         return out, relative
@@ -346,7 +346,7 @@ if __name__ == '__main__':
 
             #relative[i][j] = band power at channel i band j
             
-            for band in range(0,5):
+            for band in range(0,len(eset.band_boundary_indices) - 1):
                 stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
                                          
     #print("time: " + str(time.time() - startTime))
