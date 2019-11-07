@@ -1,5 +1,38 @@
 # Unit Testing for EEG Processor
 
+# make files
+
+# file number 1:
+# 20 secs 5 Hz, 20 secs 10 Hz, 20 secs 20 Hz
+# first three channels have boundaries covering two sections each
+# last channel has boundaries spread out
+
+time_points = np.linspace(0, 60 - 1/220, 60*220)
+data_points = np.append(np.sin(2*np.pi*5*time_points[0:20*220]),
+                        np.sin(2*np.pi*10*time_points[20*220:40*220]),
+                        np.sin(2*np.pi*20*time_points[40*220:60*220]))
+
+# make participant file
+with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/sine,sine.txt", "w") as f:
+    f.write("index\ttp9\ttp10\tfp1\tfp2\n")
+    stringtowrite = ""
+    for i in range(len(time_points)):
+        stringtowrite+=str(i) + "\t"
+                        + time_points[i] + "\t"
+                        + data_points[i] + "\t"
+                        + data_points[i] + "\t"
+                        + data_points[i] + "\t"
+                        + data_points[i] + "\n"
+    f.write(stringtowrite)
+        
+
+boundaries = ["sine,sine.txt,0 8800 ,0 4400 8800 13200 ,8800 13200 ,400 600 2746 3422 7882 8999 9032 10000 "]
+# make boundaries file
+with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/boundstest.txt", "w") as f:
+    for i in boundaries:
+        f.write(i + "\n")
+
+
 
 inputpath = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
 boundaryfilepath = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
