@@ -105,7 +105,7 @@ class EEGSet():
                 with open(EEGSetFilename,'r') as f:
                     lines = f.readlines()
 
-                    for line in lines[1:]:
+                    for line in lines[-60*self.Fs:]: # only take last 60 seconds
                         line = line.strip().split('\t') #index, tp9, tp10, af7, af8
 
                         for i in range(4):
