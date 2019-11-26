@@ -203,7 +203,7 @@ class EEGSet():
         currentcount = 0
         for i in range(len(input_series)):
             if input_indicatorArray[i] == 1:
-                currentsum = currentsum += input_series[i]
+                currentsum += input_series[i]
                 currentcount += 1
 
         return(currentsum/currentcount)
@@ -220,8 +220,8 @@ class EEGSet():
         denominator = 0
 
         for i in range(len(z)):
-            numerator += (t[i] - mean_t)*(z.[i] - mean_z)
-            denominator += pow(t.[i] - mean_t,2)
+            numerator += (t[i] - mean_t)*(z[i] - mean_z)
+            denominator += pow(t[i] - mean_t,2)
         return(numerator/denominator)
 
     def lombscarglewelch(self, input_series, input_indicatorArray):
