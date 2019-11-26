@@ -10,7 +10,17 @@ from astropy.timeseries import LombScargle
 
 class EEGSet():
 
-    def __init__(self, originalFilename, eventsFilename):
+    def __init__(self, originalFilename, eventsFilename, analysis_type):
+
+        #analysis_type = {"EDA", "EEG"}
+
+        # set from analysis type
+        if analysis_type == "EDA":
+            self.Fs = 4
+            self.num_channels = 1
+        else:
+            self.FS = 220
+            self.num_channels = 4
 
         # Chooseable Parameters:
         
@@ -186,6 +196,33 @@ class EEGSet():
                 indicatorArray.append(1)
                 
         return indicatorArray
+
+    def meanFromIndicator(self, input_series, input_indicatorArray):
+        # replaced with np.mean(trim_nparray(input_series,input_indicatorArray))?
+        currentsum = 0
+        currentcount = 0
+        for i in range(len(input_series)):
+            if input_indicatorArray[i] == 1:
+                currentsum = currentsum += input_series[i]
+                currentcount += 1
+
+        return(currentsum/currentcount)
+
+    def slopeFromIndictator(self, input_series, input_indicatorArray):
+        z = self.trim_nparray(np.array(input_series), np.array(input_indicatorArray))
+        full_timepoints = np.array([x/self.Fs for x in range(len(input_series))])
+        t = self.trim_nparray(full_timepoints, np.array(input_indicatorArray))
+
+        mean_z = np.mean(z)
+        mean_t = np.mean(t)                                         
+
+        numerator = 0
+        denominator = 0
+
+        for i in range(len(z)):
+            numerator += (t[i] - mean_t)*(z.[i] - mean_z)
+            denominator += pow(t.[i] - mean_t,2)
+        return(numerator/denominator)
 
     def lombscarglewelch(self, input_series, input_indicatorArray):
 
