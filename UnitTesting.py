@@ -45,7 +45,7 @@ for filename in os.listdir(inputpath):
     if "EEG" in filename:
 
         print("Calculating periodograms for file: " + filename)
-        eset = EEGSet(inputpath + filename, boundaryfilepath)
+        eset = EEGSet(inputpath + filename, boundaryfilepath, "EEG")
         pgrams, bandpowers, relative = eset.process()
 
         # Test output
@@ -68,11 +68,14 @@ for filename in os.listdir(inputpath):
 
 # TEST EDA
 # make participant file
+
+print("##################################################")
+print(" MAKING EDA FILES")
 with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10.txt", "w") as f:
     f.write("1524483828.23397\n4.0000")
-    values = [10 for x in range(1000)]
+    values = [str(10) for x in range(1000)]
     stringToWrite = ""
-    for v in range(values):
+    for v in values:
         stringtowrite+="\n" + v
     f.write(stringtowrite)
 
@@ -91,6 +94,10 @@ stringToWrite = ""
 
 import time
 startTime = time.time()
+
+print("...")
+print(" RESULTS")
+print("")
 
 ##for filename in os.listdir(inputpath):
 ##    if "EDA" in filename:
