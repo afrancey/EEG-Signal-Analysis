@@ -99,22 +99,12 @@ print("...")
 print(" RESULTS")
 print("")
 
-##for filename in os.listdir(inputpath):
-##    if "EDA" in filename:
-##
-##        print("Calculating periodograms for file: " + filename)
-##        eset = EEGSet(inputpath + filename, boundaryfilepath)
-##        pgrams, bandpowers, relative = eset.process()
-##
-##        # Test output
-##        print("Band Order: delta, theta, alpha, beta")
-##        print("EEGsine")
-##        print("Channel 1 Bandpowers: Expect to see large beta")
-##        print(bandpowers[0])
-##        print("Channel 2: Expect to see large alpha")
-##        print(bandpowers[1])
-##        print("Channel 3: Expect to see large theta")
-##        print(bandpowers[2])
-##        print("Channel 4: Expect to see a mix")
-##        print(bandpowers[3])
+for filename in os.listdir(inputpath):
+
+    print("Calculating (mean, slope) for file: " + filename)
+    eset = EEGSet(inputpath + filename, boundaryfilepath, "EDA")
+    mean, slope = eset.process()
+    print("Should see mean = 10 and slope = 0")
+    print(str(mean) + ", " + str(slope))
+
 
