@@ -89,10 +89,11 @@ class EEGSet():
         if self.originalSet != "file does not exist":
             print("FILE EXISTS")
             self.sample_boundaries = self.importBoundaries(eventsFilename)
-            self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(4)]
+            self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
             self.okayToProcess = True
         else:
             self.error = 'file failure'
+            print("FILE ERROR")
 
 
     def process(self):
@@ -107,7 +108,7 @@ class EEGSet():
             return(pgrams, bandpowers, relative)
         else:
             mean = self.meanFromIndicator(self.originalSet[0],self.indicatorArrays[0])
-            slope = self.slopeFromIndictaor(self.originalSet[0],self.indicatorArrays[0])
+            slope = self.slopeFromIndicator(self.originalSet[0],self.indicatorArrays[0])
             return(mean, slope)
 
     def importEEGSet(self, EEGSetFilename):
@@ -135,8 +136,6 @@ class EEGSet():
                             else:
                                 # value
                                 str_chandata[i].append(float(line[i]))
-                                
-
                 return(str_chandata)
             except ValueError:
                 print("ValueError")
@@ -161,9 +160,14 @@ class EEGSet():
                     splitline = line.split(",")
                     if splitline[0] in self.filename:
                         # we have found our boundaries in the boundary file
-                        for chan in splitline[2:]: #first two items in .csv row are taken up by filename in this case (remember extra comma)
-                            boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
-                            sample_boundaries.append(boundaries_int)
+                        if self.analysis_type == "EEG":
+                            for chan in splitline[2:]: #first two items in .csv row are taken up by filename in this case (remember extra comma)
+                                boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
+                                sample_boundaries.append(boundaries_int)
+                        else:
+                            for chan in splitline[1:]: #first two items in .csv row are taken up by filename in this case (remember extra comma)
+                                boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
+                                sample_boundaries.append(boundaries_int)
 
 
             return(sample_boundaries)
@@ -221,7 +225,7 @@ class EEGSet():
 
         return(currentsum/currentcount)
 
-    def slopeFromIndictator(self, input_series, input_indicatorArray):
+    def slopeFromIndicator(self, input_series, input_indicatorArray):
         z = self.trim_nparray(np.array(input_series), np.array(input_indicatorArray))
         full_timepoints = np.array([x/self.Fs for x in range(len(input_series))])
         t = self.trim_nparray(full_timepoints, np.array(input_indicatorArray))
