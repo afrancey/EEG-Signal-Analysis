@@ -18,9 +18,11 @@ class EEGSet():
         if analysis_type == "EDA":
             self.Fs = 4
             self.num_channels = 1
+            self.analysis_type = "EDA"
         else:
             self.FS = 220
             self.num_channels = 4
+            self.analysis_type = "EEG"
 
         # Chooseable Parameters:
         
@@ -96,12 +98,17 @@ class EEGSet():
     def process(self):
 
         # calculate periodograms of each channel
-        pgrams = self.getPeriodograms_lombwelch()
+        if (self.analysis_type == "EEG"):
+            pgrams = self.getPeriodograms_lombwelch()
 
-        # get powers between each index
-        bandpowers, relative = self.get_bands(pgrams)
+            # get powers between each index
+            bandpowers, relative = self.get_bands(pgrams)
 
-        return pgrams, bandpowers, relative
+            return(pgrams, bandpowers, relative)
+        else:
+            mean = self.meanFromIndicator(self.originalSet[0],self.indicatorArrays[0])
+            slope = self.slopeFromIndictaor(self.originalSet[0],self.indicatorArrays[0])
+            return(mean, slope)
 
     def importEEGSet(self, EEGSetFilename):
 
@@ -119,10 +126,16 @@ class EEGSet():
                     lines = f.readlines()
 
                     for line in lines[-60*self.Fs:]: # only take last 60 seconds
-                        line = line.strip().split('\t') #index, tp9, tp10, af7, af8
+                        line = line.strip().split('\t') 
 
-                        for i in range(4):
-                            str_chandata[i].append(float(line[i+1]))
+                        for i in range(self.num_channels):
+                            if self.analysis_type == "EEG":
+                                #index, tp9, tp10, af7, af8
+                                str_chandata[i].append(float(line[i+1]))
+                            else:
+                                # value
+                                str_chandata[i].append(float(line[i]))
+                                
 
                 return(str_chandata)
             except ValueError:
