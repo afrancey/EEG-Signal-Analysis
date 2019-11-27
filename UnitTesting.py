@@ -76,8 +76,8 @@ with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10.tx
     values = [str(10) for x in range(1000)]
     stringToWrite = ""
     for v in values:
-        stringtowrite+="\n" + v
-    f.write(stringtowrite)
+        stringToWrite+="\n" + v
+    f.write(stringToWrite)
 
 
 boundaries = ["const10.txt,0 100 200 250 333 448 882 932 "]
