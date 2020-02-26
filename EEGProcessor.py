@@ -25,6 +25,8 @@ class EEGSet():
             self.num_channels = 4
             self.analysis_type = "EEG"
 
+        self.condition = 'null'
+
         # Chooseable Parameters:
         
         # UPPER BOUNDS of each band
@@ -100,17 +102,27 @@ class EEGSet():
     def process(self):
 
         # calculate periodograms of each channel
+        # generate output strong (ie. one line of data file)
         if (self.analysis_type == "EEG"):
             pgrams = self.getPeriodograms_lombwelch()
 
             # get powers between each index
             bandpowers, relative = self.get_bands(pgrams)
 
+            # construct output string
+            output_list = [self.filename, self.condition] + [str(y) for x in relative for y in x] # flattens list
+            self.output_string = ",".join(output_list)
+
             return(pgrams, bandpowers, relative)
         else:
             mean = self.meanFromIndicator(self.originalSet[0],self.indicatorArrays[0])
             slope = self.slopeFromIndicator(self.originalSet[0],self.indicatorArrays[0])
+
+            output_list = [self.filename, self.condition, str(mean), str(slope)] # flattens list
+            self.output_string = ",".join(output_list)
+            
             return(mean, slope)
+        
 
     def importEEGSet(self, EEGSetFilename):
 
