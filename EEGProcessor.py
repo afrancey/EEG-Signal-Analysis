@@ -1,6 +1,7 @@
 # processes EEG files
 
 # TO-DO: match analysed data with time of inspection (ie. the last minute of file)
+# EDIT: DONE (HACKY - SHOULD READ CONFIG FILE)
 
 import scipy.signal as signal
 import numpy as np
@@ -281,6 +282,7 @@ class EEGSet():
                 # calculate periodogram
 
                 # to do: change to using astroML
+                # EDIT: DONE
                 ###########################################
                 
                 pgram = LombScargle(t, y).power(self.freqs)
