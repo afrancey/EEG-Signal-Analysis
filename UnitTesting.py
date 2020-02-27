@@ -59,6 +59,9 @@ for filename in os.listdir(inputpath):
         print(bandpowers[2])
         print("Channel 4: Expect to see a mix")
         print(bandpowers[3])
+
+        print("Output string for this file:")
+        print(eset.output_string)
         
     
 
@@ -106,5 +109,8 @@ for filename in os.listdir(inputpath):
     mean, slope = eset.process()
     print("Should see mean = 10 and slope = 0")
     print(str(mean) + ", " + str(slope))
+
+    print("Output string for this file: ")
+    print(eset.output_string)
 
 
