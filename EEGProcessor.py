@@ -87,8 +87,12 @@ class EEGSet():
         self.error = 'None'
 
         self.filename = originalFilename
-        
-        self.originalSet = self.importEEGSet(originalFilename)
+
+        if self.analysis_type == "EEG":
+            self.originalSet = self.importEEGSet(originalFilename)
+        else:
+            self.originalSet = self.importEEGSet(originalFilename + "/EDA.csv") #file is inside another folder
+            
         if self.originalSet != "file does not exist":
             print("FILE EXISTS")
             self.sample_boundaries = self.importBoundaries(eventsFilename)
