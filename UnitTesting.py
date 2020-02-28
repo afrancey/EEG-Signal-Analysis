@@ -74,6 +74,7 @@ for filename in os.listdir(inputpath):
 
 print("##################################################")
 print(" MAKING EDA FILES")
+os.mkdir("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/")
 with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/EDA.csv", "w") as f:
     f.write("1524483828.23397\n4.0000")
     values = [str(10) for x in range(1000)]
