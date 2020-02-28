@@ -182,7 +182,7 @@ class EEGSet():
                                 boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
                                 sample_boundaries.append(boundaries_int)
                         else:
-                            for chan in splitline[1:]: #first two items in .csv row are taken up by filename in this case (remember extra comma)
+                            for chan in splitline[1:]:
                                 boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
                                 sample_boundaries.append(boundaries_int)
 
