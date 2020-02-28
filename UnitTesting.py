@@ -74,7 +74,7 @@ for filename in os.listdir(inputpath):
 
 print("##################################################")
 print(" MAKING EDA FILES")
-with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10.txt", "w") as f:
+with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/EDA.csv", "w") as f:
     f.write("1524483828.23397\n4.0000")
     values = [str(10) for x in range(1000)]
     stringToWrite = ""
@@ -83,7 +83,7 @@ with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10.tx
     f.write(stringToWrite)
 
 
-boundaries = ["const10.txt,0 100 200 250 333 448 882 932 "]
+boundaries = ["const10,0 100 200 250 333 448 882 932 "]
 # make boundaries file
 with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/boundstest.csv", "w") as f:
     for i in boundaries:
