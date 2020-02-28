@@ -405,9 +405,13 @@ if __name__ == '__main__':
     #https://stackoverflow.com/questions/24702807/lomb-scargle-vs-fft-power-spectrum-crashes-with-evenly-spaced-data/
     #lol
 
-    inputpath = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
-    boundaryfilepath = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
-    outputfilepath = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
+    inputpathEEG = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
+    boundaryfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
+    outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
+
+    inputpathEDA = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
+    boundaryfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
+    outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
 
     stringToWrite = ""
 
