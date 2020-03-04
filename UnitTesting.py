@@ -3,6 +3,31 @@ import numpy as np
 from EEGProcessor import EEGSet
 import os
 
+class Empatica():
+
+    def __init__(self, folderpath, datalist):
+
+        # make the folder
+
+        self.folderpath = folderpath
+        self.datalist = datalist
+
+        os.mkdir(folderpath)
+
+        # make other files
+        otherfilenames = ['ACC.csv', 'BVP.csv', 'HR.csv', 'IBI.csv', 'info.txt',
+                          'tags.csv', 'TEMP.csv']
+
+        # literally create the files and do nothing else
+        for file in otherfilenames:
+            with open(folderpath + "/" + filename, 'w') as f:
+                pass
+
+        # make the datafile
+
+        with open(folderpath "/" + 'EDA.csv', 'w') as f:
+            f.write('1583285975,4.0' + ','.join(datalist))
+
 # make files
 
 # file number 1:
