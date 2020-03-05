@@ -3,6 +3,8 @@ import numpy as np
 from EEGProcessor import EEGSet
 import os
 
+import pathlib
+
 class Empatica():
 
     def __init__(self, folderpath, datalist):
@@ -13,7 +15,7 @@ class Empatica():
         self.datalist = datalist
 
         try:
-            os.mkdir(folderpath)
+            pathlib.Path(folderpath).mkdir(parents=True, exist_ok=True)
         except:
             print("cannot create existing folder")
 
@@ -155,7 +157,15 @@ emp1data += [str(0) for x in range(4*4)] # 4 secs artifact
 emp1data += [str(5) for x in range(30*4)] # 30 secs good
 emp1data += [str(0) for x in range(1*4)] # 1 secs artifact
 emp1data += [str(5) for x in range(15*4)] # 15 secs good
-emp1 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/', emp1data)
+emp1 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/emp1', emp1data)
+
+emp2data = [str(10) for x in range(180*4)] # 3 mins garbage
+emp2data += [str(0) for x in range(20*4)] # 25 secs art
+emp2data += [str(5) for x in range(4*4)] # 4 secs good
+emp2data += [str(0) for x in range(30*4)] # 30 secs art
+emp2data += [str(5) for x in range(1*4)] # 1 secs good
+emp2data += [str(0) for x in range(15*4)] # 15 secs art
+emp2 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/emp2', emp2data)
 
 
 
