@@ -12,21 +12,24 @@ class Empatica():
         self.folderpath = folderpath
         self.datalist = datalist
 
-        os.mkdir(folderpath)
+        try:
+            os.mkdir(folderpath)
+        except:
+            print("cannot create existing folder")
 
         # make other files
         otherfilenames = ['ACC.csv', 'BVP.csv', 'HR.csv', 'IBI.csv', 'info.txt',
                           'tags.csv', 'TEMP.csv']
 
         # literally create the files and do nothing else
-        for file in otherfilenames:
+        for filename in otherfilenames:
             with open(folderpath + "/" + filename, 'w') as f:
                 pass
 
         # make the datafile
 
-        with open(folderpath "/" + 'EDA.csv', 'w') as f:
-            f.write('1583285975,4.0' + ','.join(datalist))
+        with open(folderpath + "/" + 'EDA.csv', 'w') as f:
+            f.write('1583285975\n4.0' + '\n'.join(datalist))
 
 # make files
 
@@ -99,7 +102,12 @@ for filename in os.listdir(inputpath):
 
 print("##################################################")
 print(" MAKING EDA FILES")
-os.mkdir("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/")
+
+try:
+    os.mkdir("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/")
+except:
+    print("cannot create existing folder")
+    
 with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/EDA.csv", "w") as f:
     f.write("1524483828.23397\n4.0000")
     values = [str(10) for x in range(1000)]
@@ -138,5 +146,16 @@ for filename in os.listdir(inputpath):
 
     print("Output string for this file: ")
     print(eset.output_string)
+
+
+# create Empatica files to test whole pipeline
+emp1data = [str(10) for x in range(180*4)] # 3 mins garbage
+emp1data += [str(5) for x in range(20*4)] # 25 secs good
+emp1data += [str(0) for x in range(4*4)] # 4 secs artifact
+emp1data += [str(5) for x in range(30*4)] # 30 secs good
+emp1data += [str(0) for x in range(1*4)] # 1 secs artifact
+emp1data += [str(5) for x in range(15*4)] # 15 secs good
+emp1 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/', emp1data)
+
 
 
