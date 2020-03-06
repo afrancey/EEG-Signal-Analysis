@@ -21,7 +21,7 @@ class EEGSet():
             self.num_channels = 1
             self.analysis_type = "EDA"
         else:
-            self.FS = 220
+            self.Fs = 220
             self.num_channels = 4
             self.analysis_type = "EEG"
 
@@ -37,7 +37,6 @@ class EEGSet():
         HZ_BETA = 30
         self.HZ_BAND_BOUNDARIES = [HZ_MIN, HZ_DELTA, HZ_THETA, HZ_ALPHA, HZ_BETA]
 
-        self.Fs = 220 #sampling rate of our EEG data
         self.windowLength = 220 # 1 second
         self.windowOverlap = 110 # 0.5 seconds overlap
 
