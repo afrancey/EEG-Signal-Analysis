@@ -167,5 +167,22 @@ emp2data += [str(5) for x in range(1*4)] # 1 secs good
 emp2data += [str(0) for x in range(15*4)] # 15 secs art
 emp2 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/emp2', emp2data)
 
+# after inspecting files
+inputpath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/" # folder which contains EEG files
+boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/bounds_1583451288194.csv" # path to boundaries
+outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/inspectiontestoutput.csv"
+
+for filename in os.listdir(inputpath):
+
+    if 'config' not in filename:
+        print("Calculating (mean, slope) for file: " + filename)
+        eset = EEGSet(inputpath + filename, boundaryfilepath, "EDA")
+        mean, slope = eset.process()
+        print("Should see mean = 5 and slope = 0")
+        print(str(mean) + ", " + str(slope))
+
+        print("Output string for this file: ")
+        print(eset.output_string)
+
 
 
