@@ -172,6 +172,7 @@ inputpath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/" # fold
 boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/bounds_1583451288194.csv" # path to boundaries
 outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/inspectiontestoutput.csv"
 
+stringtowrite = ''
 for filename in os.listdir(inputpath):
 
     if 'config' not in filename:
@@ -183,6 +184,14 @@ for filename in os.listdir(inputpath):
 
         print("Output string for this file: ")
         print(eset.output_string)
+        stringtowrite += eset.output_string + "\n"
+
+
+with open(outputfilepath, 'w') as f:
+    f.write(stringtowrite)
+
+
+    
 
 
 
