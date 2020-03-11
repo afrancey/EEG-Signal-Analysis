@@ -95,7 +95,7 @@ class EEGSet():
         if self.originalSet != "file does not exist":
             print("FILE EXISTS")
             self.sample_boundaries = self.importBoundaries(eventsFilename)
-            if self.sample_boundaries != "no boundaries":
+            if self.sample_boundaries not in ["no boundaries", "file does not exist"]:
                 self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
                 self.okayToProcess = True
         else:
@@ -432,7 +432,7 @@ if __name__ == '__main__':
     for filename in os.listdir(inputpathEEG):
         print("Calculating periodograms for file: " + filename)
 
-        if "EEG" in filename and analysis_type = "EEG":
+        if "EEG" in filename and analysis_type == "EEG":
             eset = EEGSet(inputpathEEG + filename, boundaryfilepathEEG)
 
             if eset.okayToProcess:
@@ -449,7 +449,7 @@ if __name__ == '__main__':
             
     for filename in os.listdir(inputpathEDA):
 
-        if "config" not in filename and analysis_type = "EDA":
+        if "config" not in filename and analysis_type == "EDA":
             print(filename)
             eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
             if eset.okayToProcess:
