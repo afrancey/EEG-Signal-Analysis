@@ -95,9 +95,8 @@ class EEGSet():
         if self.originalSet != "file does not exist":
             print("FILE EXISTS")
             self.sample_boundaries = self.importBoundaries(eventsFilename)
-            self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
-
             if self.sample_boundaries != "no boundaries":
+                self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
                 self.okayToProcess = True
         else:
             self.error = 'file failure'
