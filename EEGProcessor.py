@@ -439,14 +439,17 @@ if __name__ == '__main__':
     outputfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/output_FINAL.csv"
     conditionsfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/PARTICIPANTS.csv"
 
-    stringToWrite = ""
-
     import time
     startTime = time.time()
 
     analysis_type = "EDA"
 
+    headings = {"EDA":"file,subject,time,group,mean,slope\n", "EEG":"HEADINGS"}
+    stringToWrite = headings[analysis_type]
+
+
     for filename in os.listdir(inputpathEEG):
+
         print("Calculating periodograms for file: " + filename)
 
         if "EEG" in filename and analysis_type == "EEG":
@@ -465,7 +468,6 @@ if __name__ == '__main__':
             #    stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
             
     for filename in os.listdir(inputpathEDA):
-
         if "config" not in filename and analysis_type == "EDA":
             print(filename)
             eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, conditionsfilepathEDA, "EDA")
