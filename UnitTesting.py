@@ -169,8 +169,8 @@ emp2 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/emp2
 
 # after inspecting files
 inputpath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/" # folder which contains EEG files
-boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/bounds_1583451288194.csv" # path to boundaries
-outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/inspectiontestoutput.csv"
+boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/bounds_artifactfree.csv" # path to boundaries
+outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/inspectiontestoutput1.csv"
 
 stringtowrite = ''
 for filename in os.listdir(inputpath):
@@ -185,6 +185,26 @@ for filename in os.listdir(inputpath):
         print("Output string for this file: ")
         print(eset.output_string)
         stringtowrite += eset.output_string + "\n"
+
+inputpath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/" # folder which contains EEG files
+boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/bounds_emp1pos_emp2neg.csv" # path to boundaries
+outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/inspectiontestoutput2.csv"
+
+stringtowrite = ''
+
+print("should see pos slope on emp1, neg slope on emp2")
+for filename in os.listdir(inputpath):
+
+    if 'config' not in filename:
+        print("Calculating (mean, slope) for file: " + filename)
+        eset = EEGSet(inputpath + filename, boundaryfilepath, "EDA")
+        mean, slope = eset.process()
+        print(str(mean) + ", " + str(slope))
+
+        print("Output string for this file: ")
+        print(eset.output_string)
+        stringtowrite += eset.output_string + "\n"
+
 
 
 with open(outputfilepath, 'w') as f:
