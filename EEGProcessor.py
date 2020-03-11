@@ -11,7 +11,7 @@ from astropy.timeseries import LombScargle
 
 class EEGSet():
 
-    def __init__(self, originalFilename, eventsFilename, analysis_type):
+    def __init__(self, originalFilename, eventsFilename, conditionsFilename, analysis_type):
 
         #analysis_type = {"EDA", "EEG"}
 
@@ -26,6 +26,7 @@ class EEGSet():
             self.analysis_type = "EEG"
 
         self.condition = 'null'
+        self.conditionsFilename = conditionsFilename
 
         # Chooseable Parameters:
         
@@ -97,6 +98,7 @@ class EEGSet():
             self.sample_boundaries = self.importBoundaries(eventsFilename)
             if self.sample_boundaries not in ["no boundaries", "file does not exist"]:
                 self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
+                self.condition = self.importConditions(self.conditionsFilename)
                 self.okayToProcess = True
         else:
             self.error = 'file failure'
@@ -195,6 +197,20 @@ class EEGSet():
                 return("no boundaries")
         else:
             return("file does not exist")
+
+    def importConditions(self, conditions_filename):
+        with open(conditions_filename,'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                splitline = line.split(",")
+                choppedname = splitline[0][:-4] # takes off .zip
+                if choppedname in self.filename:
+                    conditions = splitline[2]
+                    conditions = conditions.split(" ")
+                    conditions = ",".join(conditions)
+
+            return(conditions)
+                
 
 
     def trim(self, series, indicatorArray):
@@ -421,6 +437,7 @@ if __name__ == '__main__':
     inputpathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/empatica/" # folder which contains EEG files
     boundaryfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/bounds_FINAL.csv" # path to boundaries
     outputfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/output_FINAL.csv"
+    conditionsfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/PARTICIPANTS.csv"
 
     stringToWrite = ""
 
@@ -451,7 +468,7 @@ if __name__ == '__main__':
 
         if "config" not in filename and analysis_type == "EDA":
             print(filename)
-            eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
+            eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, conditionsfilepathEDA, "EDA")
             if eset.okayToProcess:
                 mean, slope = eset.process()
                 stringToWrite+=eset.output_string + "\n"
