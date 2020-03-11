@@ -96,7 +96,9 @@ class EEGSet():
             print("FILE EXISTS")
             self.sample_boundaries = self.importBoundaries(eventsFilename)
             self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
-            self.okayToProcess = True
+
+            if self.sample_boundaries != "no boundaries":
+                self.okayToProcess = True
         else:
             self.error = 'file failure'
             print("FILE ERROR")
@@ -169,6 +171,8 @@ class EEGSet():
 
         sample_boundaries = []
 
+        found_boundaries = False
+
         if os.path.isfile(sample_boundaries_filename):
             with open(sample_boundaries_filename, 'r') as f:
                 lines = f.readlines()
@@ -176,6 +180,7 @@ class EEGSet():
                     splitline = line.split(",")
                     if splitline[0] in self.filename:
                         # we have found our boundaries in the boundary file
+                        found_boundaries = True
                         if self.analysis_type == "EEG":
                             for chan in splitline[2:]: #first two items in .csv row are taken up by filename in this case (remember extra comma)
                                 boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
@@ -185,10 +190,12 @@ class EEGSet():
                                 boundaries_int = [int(x) for x in chan.split(" ")[:-1]] # last character is space, not an int for boundary marker
                                 sample_boundaries.append(boundaries_int)
 
-
-            return(sample_boundaries)
+            if found_boundaries:
+                return(sample_boundaries)
+            else:
+                return("no boundaries")
         else:
-            return "file does not exist"
+            return("file does not exist")
 
 
     def trim(self, series, indicatorArray):
@@ -428,9 +435,10 @@ if __name__ == '__main__':
 
         if "EEG" in filename and analysis_type = "EEG":
             eset = EEGSet(inputpathEEG + filename, boundaryfilepathEEG)
-            pgrams, bandpowers, relative = eset.process()
 
-            stringTowrite+=eset.output_string + "\n"
+            if eset.okayToProcess:
+                pgrams, bandpowers, relative = eset.process()
+                stringTowrite+=eset.output_string + "\n"
 
             # deprecated below
             #stringToWrite+= filename + ","
@@ -445,8 +453,9 @@ if __name__ == '__main__':
         if "config" not in filename and analysis_type = "EDA":
             print(filename)
             eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
-            mean, slope = eset.process()
-            stringToWrite+=eset.output_string + "\n"
+            if eset.okayToProcess:
+                mean, slope = eset.process()
+                stringToWrite+=eset.output_string + "\n"
 
     with open(outputfilepathEDA, 'w') as f:
         f.write(stringToWrite)
