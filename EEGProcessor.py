@@ -428,17 +428,20 @@ if __name__ == '__main__':
             eset = EEGSet(inputpath + filename, boundaryfilepath)
             pgrams, bandpowers, relative = eset.process()
 
-            stringToWrite+= filename + ","
+            stringTowrite+=eset.output_string + "\n"
+
+            # deprecated below
+            #stringToWrite+= filename + ","
 
             #relative[i][j] = band power at channel i band j
             
-            for band in range(0,len(eset.band_boundary_indices) - 1):
-                stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
+            #for band in range(0,len(eset.band_boundary_indices) - 1):
+            #    stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
 
         if "EDA" in filename:
             eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
             mean, slope = eset.process()
-            stringToWrite+=eset.outputstring + "\n"
+            stringToWrite+=eset.output_string + "\n"
 
     with open(outputfilepathEDA, 'w') as f:
         f.write(stringToWrite)
