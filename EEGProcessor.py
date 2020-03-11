@@ -421,10 +421,12 @@ if __name__ == '__main__':
     import time
     startTime = time.time()
 
+    analysis_type = "EDA"
+
     for filename in os.listdir(inputpathEEG):
         print("Calculating periodograms for file: " + filename)
 
-        if "EEG" in filename:
+        if "EEG" in filename and analysis_type = "EEG":
             eset = EEGSet(inputpathEEG + filename, boundaryfilepathEEG)
             pgrams, bandpowers, relative = eset.process()
 
@@ -440,7 +442,8 @@ if __name__ == '__main__':
             
     for filename in os.listdir(inputpathEDA):
 
-        if "config" not in filename:
+        if "config" not in filename and analysis_type = "EDA":
+            print(filename)
             eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
             mean, slope = eset.process()
             stringToWrite+=eset.output_string + "\n"
