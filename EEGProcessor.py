@@ -425,7 +425,7 @@ if __name__ == '__main__':
         print("Calculating periodograms for file: " + filename)
 
         if "EEG" in filename:
-            eset = EEGSet(inputpath + filename, boundaryfilepath)
+            eset = EEGSet(inputpathEEG + filename, boundaryfilepathEEG)
             pgrams, bandpowers, relative = eset.process()
 
             stringTowrite+=eset.output_string + "\n"
