@@ -412,7 +412,7 @@ if __name__ == '__main__':
     boundaryfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
     outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
 
-    inputpathEDA = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
+    inputpathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/empatica/" # folder which contains EEG files
     boundaryfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/bounds_FINAL.csv" # path to boundaries
     outputfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/output_FINAL.csv"
 
@@ -440,7 +440,7 @@ if __name__ == '__main__':
             
     for filename in os.listdir(inputpathEDA):
 
-        if "EDA" in filename:
+        if "config" not in filename:
             eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
             mean, slope = eset.process()
             stringToWrite+=eset.output_string + "\n"
