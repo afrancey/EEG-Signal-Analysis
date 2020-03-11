@@ -413,8 +413,8 @@ if __name__ == '__main__':
     outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
 
     inputpathEDA = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
-    boundaryfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
-    outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
+    boundaryfilepathEDA = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
+    outputfilepathEDA = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
 
     stringToWrite = ""
 
@@ -422,9 +422,9 @@ if __name__ == '__main__':
     startTime = time.time()
 
     for filename in os.listdir(inputpath):
-        if "EEG" in filename:
+        print("Calculating periodograms for file: " + filename)
 
-            print("Calculating periodograms for file: " + filename)
+        if "EEG" in filename:
             eset = EEGSet(inputpath + filename, boundaryfilepath)
             pgrams, bandpowers, relative = eset.process()
 
@@ -434,7 +434,14 @@ if __name__ == '__main__':
             
             for band in range(0,len(eset.band_boundary_indices) - 1):
                 stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
-                                         
+
+        if "EDA" in filename:
+            eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
+            mean, slope = eset.process()
+            stringToWrite+=eset.outputstring + "\n"
+
+    with open(outputfilepathEDA, 'w') as f:
+        f.write(stringToWrite)
     #print("time: " + str(time.time() - startTime))
     #print(freqs)
 
