@@ -413,15 +413,15 @@ if __name__ == '__main__':
     outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
 
     inputpathEDA = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
-    boundaryfilepathEDA = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
-    outputfilepathEDA = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
+    boundaryfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/bounds_FINAL.csv" # path to boundaries
+    outputfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/output_FINAL.csv"
 
     stringToWrite = ""
 
     import time
     startTime = time.time()
 
-    for filename in os.listdir(inputpath):
+    for filename in os.listdir(inputpathEEG):
         print("Calculating periodograms for file: " + filename)
 
         if "EEG" in filename:
@@ -437,6 +437,8 @@ if __name__ == '__main__':
             
             #for band in range(0,len(eset.band_boundary_indices) - 1):
             #    stringToWrite+= ",".join([str(relative[channel][band]) for channel in range(0,4)]) + ","
+            
+    for filename in os.listdir(inputpathEDA):
 
         if "EDA" in filename:
             eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, "EDA")
