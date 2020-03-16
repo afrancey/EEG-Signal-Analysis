@@ -28,6 +28,8 @@ class EEGSet():
         self.condition = 'null'
         self.conditionsFilename = conditionsFilename
 
+        self.missing_channels = [] #used when calculating average band power
+
         # Chooseable Parameters:
         
         # UPPER BOUNDS of each band
@@ -422,6 +424,18 @@ class EEGSet():
                 relative[i][j] = float(out[i][j])/sum(out[i])
 
         return out, relative
+
+    def get_missing_channels(self, missing_channels_file):
+         # lines of missing_channels_file:
+         # filename,int int int
+
+         with open(missing_channels_file, 'r') as f:
+             lines = f.readlines()
+             for line in lines:
+                 partfilename, channels = line.strip().split(",")
+
+                 if partfilename in self.filename:
+                     self.missing_channels = [int(chan) for chan in channels.split(" ")]
 
 if __name__ == '__main__':
     # processes all the EEG files
