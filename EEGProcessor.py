@@ -11,7 +11,7 @@ from astropy.timeseries import LombScargle
 
 class EEGSet():
 
-    def __init__(self, originalFilename, eventsFilename, conditionsFilename, analysis_type):
+    def __init__(self, originalFilename, eventsFilename, conditionsFilename, missingChannelsFilename, analysis_type):
 
         #analysis_type = {"EDA", "EEG"}
 
@@ -29,6 +29,7 @@ class EEGSet():
         self.conditionsFilename = conditionsFilename
 
         self.missing_channels = [] #used when calculating average band power
+        self.missingFilename = missingChannelsFilename
 
         # Chooseable Parameters:
         
@@ -101,6 +102,7 @@ class EEGSet():
             if self.sample_boundaries not in ["no boundaries", "file does not exist"]:
                 self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
                 self.condition = self.importConditions(self.conditionsFilename)
+                self.missing_channels = self.get_missing_channels(self.missingFilename)
                 self.okayToProcess = True
         else:
             self.error = 'file failure'
@@ -112,13 +114,21 @@ class EEGSet():
         # calculate periodograms of each channel
         # generate output strong (ie. one line of data file)
         if (self.analysis_type == "EEG"):
+            outputtype = "avg"
             pgrams = self.getPeriodograms_lombwelch()
 
             # get powers between each index
             bandpowers, relative = self.get_bands(pgrams)
 
+            # get average bandpowers
+            avgbands = self.get_average_bands(bandpowers)
+
             # construct output string
-            output_list = [self.filename, self.condition] + [str(y) for x in relative for y in x] # flattens list
+            if outputtype == "rel":
+                output_list = [self.filename, self.condition] + [str(y) for x in relative for y in x] # flattens list
+            elif outputtype == "avg":
+                outputlist = [self.filename, self.condition] + [str(y) for x in avgbands] # flattens list
+
             self.output_string = ",".join(output_list)
 
             return(pgrams, bandpowers, relative)
@@ -449,13 +459,17 @@ class EEGSet():
          # "filename,int int int\n"
          # where int in channel index (0-3)
 
-         with open(missing_channels_file, 'r') as f:
-             lines = f.readlines()
-             for line in lines:
-                 partfilename, channels = line.strip().split(",")
+        missing = []
 
-                 if partfilename in self.filename:
-                     self.missing_channels = [int(chan) for chan in channels.split(" ")]
+        with open(missing_channels_file, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                partfilename, channels = line.strip().split(",")
+
+                if partfilename in self.filename:
+                    missing = [int(chan) for chan in channels.split(" ")]
+
+        return(missing)
 
 if __name__ == '__main__':
     # processes all the EEG files
