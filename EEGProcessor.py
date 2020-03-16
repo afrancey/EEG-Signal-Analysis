@@ -425,9 +425,29 @@ class EEGSet():
 
         return out, relative
 
+    def get_average_bands(self, bands):
+        # bands[chan][band]
+
+        avgbands = [0,0,0,0]
+
+        for band in range(4):
+
+            bandsum = 0
+            bandcount = 0
+            
+            for chan in range(4):
+                if chan not in self.missing_channels:
+                    bandsum += bands[chan][band]
+                    bandcount += 1
+
+            avgbands[band] = bandsum/bandcount
+
+        return(avgbands)
+
     def get_missing_channels(self, missing_channels_file):
          # lines of missing_channels_file:
          # filename,int int int
+         # where int in channel index (0-3)
 
          with open(missing_channels_file, 'r') as f:
              lines = f.readlines()
