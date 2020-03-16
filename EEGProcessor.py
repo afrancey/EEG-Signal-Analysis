@@ -446,7 +446,7 @@ class EEGSet():
 
     def get_missing_channels(self, missing_channels_file):
          # lines of missing_channels_file:
-         # filename,int int int
+         # "filename,int int int\n"
          # where int in channel index (0-3)
 
          with open(missing_channels_file, 'r') as f:
