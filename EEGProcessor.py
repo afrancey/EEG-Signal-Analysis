@@ -102,7 +102,8 @@ class EEGSet():
             if self.sample_boundaries not in ["no boundaries", "file does not exist"]:
                 self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
                 self.condition = self.importConditions(self.conditionsFilename)
-                self.missing_channels = self.get_missing_channels(self.missingFilename)
+                if self.missingFilename != "none":
+                    self.missing_channels = self.get_missing_channels(self.missingFilename)
                 self.okayToProcess = True
         else:
             self.error = 'file failure'
@@ -481,11 +482,13 @@ if __name__ == '__main__':
     inputpathEEG = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
     boundaryfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
     outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
+    missingchannelspathEEG = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2"
 
     inputpathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/empatica/" # folder which contains EEG files
     boundaryfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/bounds_FINAL.csv" # path to boundaries
     outputfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/output_FINAL.csv"
-    conditionsfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/PARTICIPANTS.csv"
+
+    conditionsfilepath = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/PARTICIPANTS.csv"
 
     import time
     startTime = time.time()
@@ -501,7 +504,7 @@ if __name__ == '__main__':
         print("Calculating periodograms for file: " + filename)
 
         if "EEG" in filename and analysis_type == "EEG":
-            eset = EEGSet(inputpathEEG + filename, boundaryfilepathEEG)
+            eset = EEGSet(inputpathEEG + filename, boundaryfilepathEEG, conditionsfilepath, missingchannelspathEEG, "EEG")
 
             if eset.okayToProcess:
                 pgrams, bandpowers, relative = eset.process()
@@ -518,7 +521,7 @@ if __name__ == '__main__':
     for filename in os.listdir(inputpathEDA):
         if "config" not in filename and analysis_type == "EDA":
             print(filename)
-            eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, conditionsfilepathEDA, "EDA")
+            eset = EEGSet(inputpathEDA + filename, boundaryfilepathEDA, conditionsfilepath, "none", "EDA")
             if eset.okayToProcess:
                 mean, slope = eset.process()
                 stringToWrite+=eset.output_string + "\n"
