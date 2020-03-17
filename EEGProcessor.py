@@ -216,11 +216,18 @@ class EEGSet():
             lines = f.readlines()
             for line in lines:
                 splitline = line.split(",")
-                choppedname = splitline[0][:-4] # takes off .zip
-                if choppedname in self.filename:
-                    conditions = splitline[2]
-                    conditions = conditions.split(" ")
-                    conditions = ",".join(conditions)
+                if self.analysis_type = "EDA":
+                    choppedname = splitline[0][:-4] # takes off .zip (because we want folder name)
+                    if choppedname in self.filename: # note: should we do in or does in match exactly?
+                        conditions = splitline[2]
+                        conditions = conditions.split(" ")
+                        conditions = ",".join(conditions)
+                elif self.analysis_type = "EEG":
+                    modname = splitline[3].replace("-",",") # EEG filename has a comma in it, conditions csv has dash
+                    if modname in self.filename:
+                        conditions = splitline[2]
+                        conditions = conditions.split(" ")
+                        conditions = ",".join(conditions)                    
 
             return(conditions)
                 
