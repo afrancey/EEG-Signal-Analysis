@@ -101,10 +101,10 @@ class EEGSet():
             self.sample_boundaries = self.importBoundaries(eventsFilename)
             if self.sample_boundaries not in ["no boundaries", "file does not exist"]:
                 self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
-                self.condition = self.importConditions(self.conditionsFilename)
-                if self.missingFilename != "none":
-                    self.missing_channels = self.get_missing_channels(self.missingFilename)
-                self.okayToProcess = True
+            self.condition = self.importConditions(self.conditionsFilename)
+            if self.missingFilename != "none":
+                self.missing_channels = self.get_missing_channels(self.missingFilename)
+            self.okayToProcess = True
         else:
             self.error = 'file failure'
             print("FILE ERROR")
@@ -128,8 +128,7 @@ class EEGSet():
             if outputtype == "rel":
                 output_list = [self.filename, self.condition] + [str(y) for x in relative for y in x] # flattens list
             elif outputtype == "avg":
-                outputlist = [self.filename, self.condition] + [str(y) for x in avgbands] # flattens list
-
+                output_list = [self.filename, self.condition] + [str(x) for x in avgbands] # flattens list
             self.output_string = ",".join(output_list)
 
             return(pgrams, bandpowers, relative)
@@ -215,24 +214,22 @@ class EEGSet():
         with open(conditions_filename,'r') as f:
             lines = f.readlines()
             for line in lines:
-                splitline = line.split(",")
-                if self.analysis_type = "EDA":
+                splitline = line.strip().split(",")
+                if self.analysis_type == "EDA":
                     choppedname = splitline[0][:-4] # takes off .zip (because we want folder name)
                     if choppedname in self.filename: # note: should we do in or does in match exactly?
                         conditions = splitline[2]
                         conditions = conditions.split(" ")
                         conditions = ",".join(conditions)
-                elif self.analysis_type = "EEG":
+                        return(conditions)
+                elif self.analysis_type == "EEG":
                     modname = splitline[3].replace("-",",") # EEG filename has a comma in it, conditions csv has dash
                     if modname in self.filename:
                         conditions = splitline[2]
                         conditions = conditions.split(" ")
-                        conditions = ",".join(conditions)                    
-
-            return(conditions)
+                        conditions = ",".join(conditions)
+                        return(conditions)
                 
-
-
     def trim(self, series, indicatorArray):
         # trims a list (series) according to indicatorArray
         # series: time series whose interval matches up with indicatorArray
@@ -489,7 +486,7 @@ if __name__ == '__main__':
     inputpathEEG = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
     boundaryfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
     outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
-    missingchannelspathEEG = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2"
+    missingchannelspathEEG = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/missing_channels.csv"
 
     inputpathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/empatica/" # folder which contains EEG files
     boundaryfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/bounds_FINAL.csv" # path to boundaries
@@ -500,7 +497,7 @@ if __name__ == '__main__':
     import time
     startTime = time.time()
 
-    analysis_type = "EDA"
+    analysis_type = "EEG"
 
     headings = {"EDA":"file,subject,time,group,mean,slope\n", "EEG":"HEADINGS"}
     stringToWrite = headings[analysis_type]
