@@ -98,13 +98,15 @@ class EEGSet():
             
         if self.originalSet != "file does not exist":
             print("FILE EXISTS")
+            self.condition = self.importConditions(self.conditionsFilename)
+            
+            if self.missingFilename != "none":
+                self.missing_channels = self.get_missing_channels(self.missingFilename)
+                
             self.sample_boundaries = self.importBoundaries(eventsFilename)
             if self.sample_boundaries not in ["no boundaries", "file does not exist"]:
                 self.indicatorArrays = [self.makeIndicatorArray(self.sample_boundaries[ch], len(self.originalSet[ch])) for ch in range(self.num_channels)]
-            self.condition = self.importConditions(self.conditionsFilename)
-            if self.missingFilename != "none":
-                self.missing_channels = self.get_missing_channels(self.missingFilename)
-            self.okayToProcess = True
+                self.okayToProcess = True
         else:
             self.error = 'file failure'
             print("FILE ERROR")
