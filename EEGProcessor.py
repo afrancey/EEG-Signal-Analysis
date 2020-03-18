@@ -456,8 +456,10 @@ class EEGSet():
                 if chan not in self.missing_channels:
                     bandsum += bands[chan][band]
                     bandcount += 1
-
-            avgbands[band] = bandsum/bandcount
+            if bandcount != 0:
+                avgbands[band] = bandsum/bandcount
+            else:
+                return(["no good channels"])
 
         return(avgbands)
 
@@ -514,7 +516,7 @@ if __name__ == '__main__':
 
             if eset.okayToProcess:
                 pgrams, bandpowers, relative = eset.process()
-                stringTowrite+=eset.output_string + "\n"
+                stringToWrite+=eset.output_string + "\n"
 
             # deprecated below
             #stringToWrite+= filename + ","
@@ -532,8 +534,13 @@ if __name__ == '__main__':
                 mean, slope = eset.process()
                 stringToWrite+=eset.output_string + "\n"
 
-    with open(outputfilepathEDA, 'w') as f:
-        f.write(stringToWrite)
+    if analysis_type == "EDA":
+        with open(outputfilepathEDA, 'w') as f:
+            f.write(stringToWrite)
+    elif analysis_type == "EEG":
+        with open(outputfilepathEEG, 'w') as f:
+            f.write(stringToWrite)
+            
     #print("time: " + str(time.time() - startTime))
     #print(freqs)
 
