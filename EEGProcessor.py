@@ -226,7 +226,7 @@ class EEGSet():
                         return(conditions)
                 elif self.analysis_type == "EEG":
                     modname = splitline[3].replace("-",",") # EEG filename has a comma in it, conditions csv has dash
-                    if modname in self.filename:
+                    if modname != "" and modname in self.filename:
                         conditions = splitline[2]
                         conditions = conditions.split(" ")
                         conditions = ",".join(conditions)
