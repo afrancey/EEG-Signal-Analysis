@@ -128,9 +128,9 @@ class EEGSet():
 
             # construct output string
             if outputtype == "rel":
-                output_list = [self.filename, self.condition] + [str(y) for x in relative for y in x] # flattens list
+                output_list = [self.filename.replace(',','-'), self.condition] + [str(y) for x in relative for y in x] # flattens list
             elif outputtype == "avg":
-                output_list = [self.filename, self.condition] + [str(x) for x in avgbands] # flattens list
+                output_list = [self.filename.replace(',','-'), self.condition] + [str(x) for x in avgbands] # flattens list
             self.output_string = ",".join(output_list)
 
             return(pgrams, bandpowers, relative)
