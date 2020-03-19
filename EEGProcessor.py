@@ -503,7 +503,7 @@ if __name__ == '__main__':
 
     analysis_type = "EEG"
 
-    headings = {"EDA":"file,subject,time,group,mean,slope\n", "EEG":"HEADINGS"}
+    headings = {"EDA":"file,subject,time,group,mean,slope\n", "EEG":"name,subject,time,group,delta,theta,alpha,beta\n"}
     stringToWrite = headings[analysis_type]
 
 
