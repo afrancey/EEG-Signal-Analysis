@@ -5,18 +5,16 @@ import os
 
 import pathlib
 
-C:/Users/AFStealth/Desktop/test files
+dirname = os.path.dirname(__file__).replace("\\","/") + "/"
 
-dirname = os.path.dirname(__file__) + "/"
-
-EEG_files = dirname + "/test files/EEG/files/"
-EEG_boundaries = dirname + "/test files/EEG/boundaries/"
-EEG_output = dirname + "/test files/EEG/output/"
+EEG_files = dirname + "test files/EEG/files/"
+EEG_boundaries = dirname + "test files/EEG/boundaries/"
+EEG_output = dirname + "test files/EEG/output/"
 
 
-EDA_files = dirname + "/test files/EDA/files/"
-EDA_boundaries = dirname + "/test files/EDA/boundaries/"
-EDA_output = dirname + "/test files/EDA/output/"
+EDA_folders = dirname + "test files/EDA/folders/"
+EDA_boundaries = dirname + "test files/EDA/boundaries/"
+EDA_output = dirname + "test files/EDA/output/"
 
 
 
@@ -68,7 +66,7 @@ with open(EEG_files + "EEGsine,sine.txt", "w") as f:
 
 boundaries = ["EEGsine,sine.txt,0 8800 ,0 4400 8800 13200 ,4400 13200 ,400 600 2746 3422 7882 8999 9032 10000 "]
 # make boundaries file
-with open(EEG_boundaries, "w") as f:
+with open(EEG_boundaries + "EEGsine.csv", "w") as f:
     for i in boundaries:
         f.write(i + "\n")
 
@@ -79,11 +77,12 @@ stringToWrite = ""
 import time
 startTime = time.time()
 
-for filename in os.listdir(inputpath):
+for filename in os.listdir(EEG_files):
     if "EEG" in filename:
 
         print("Calculating periodograms for file: " + filename)
-        eset = EEGSet(EEG_files, EEG_boundaries, "EEG")
+        eset = EEGSet(EEG_files + filename, EEG_boundaries + "EEGsine.csv", 'none','none',"EEG")
+
         pgrams, bandpowers, relative = eset.process()
 
         # Test output
@@ -128,7 +127,7 @@ with open(EDA_folders + "const10/EDA.csv", "w") as f:
 
 boundaries = ["const10,0 100 200 250 333 448 882 932 "]
 # make boundaries file
-with open(EDA_boundaries, "w") as f:
+with open(EDA_boundaries + "const10.csv", "w") as f:
     for i in boundaries:
         f.write(i + "\n")
 
@@ -141,10 +140,11 @@ print("...")
 print(" RESULTS")
 print("")
 
-for filename in os.listdir(inputpath):
-
+for filename in os.listdir(EDA_folders):
+ 
     print("Calculating (mean, slope) for file: " + filename)
-    eset = EEGSet(EDA_folders + filename, EDA_boundaries, "EDA")
+    print(EDA_folders + filename)
+    eset = EEGSet(EDA_folders + filename, EDA_boundaries + "const10.csv", 'none','none',"EDA")
     mean, slope = eset.process()
     print("Should see mean = 10 and slope = 0")
     print(str(mean) + ", " + str(slope))
@@ -168,7 +168,7 @@ emp2data += [str(5) for x in range(4*4)] # 4 secs good
 emp2data += [str(0) for x in range(30*4)] # 30 secs art
 emp2data += [str(5) for x in range(1*4)] # 1 secs good
 emp2data += [str(0) for x in range(15*4)] # 15 secs art
-emp2 = Empatica(EDA_folder + 'emp2', emp2data)
+emp2 = Empatica(EDA_folders + 'emp2', emp2data)
 
 # EEG file
 time_points = np.linspace(0, 75 - 1/220, 75*220)
@@ -185,48 +185,50 @@ with open(EEG_files + "EEGtestart,testart.txt", "w") as f:
         stringtowrite+=str(i) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\n"
     f.write(stringtowrite)
 
-# after inspecting files
-inputpath = EDA_folders # folder which contains EEG files
-boundaryfilepath = EDA_boundaries + "bounds_artifactfree.csv" # path to boundaries
-outputfilepath = EDA_output + "inspectiontestoutput1.csv"
+inspected = False
+if inspected:
+    # after inspecting files
+    inputpath = EDA_folders # folder which contains EEG files
+    boundaryfilepath = EDA_boundaries + "bounds_artifactfree.csv" # path to boundaries
+    outputfilepath = EDA_output + "inspectiontestoutput1.csv"
 
-stringtowrite = ''
-for filename in os.listdir(inputpath):
+    stringtowrite = ''
+    for filename in os.listdir(inputpath):
 
-    if 'config' not in filename:
-        print("Calculating (mean, slope) for file: " + filename)
-        eset = EEGSet(inputpath + filename, boundaryfilepath, "EDA")
-        mean, slope = eset.process()
-        print("Should see mean = 5 and slope = 0")
-        print(str(mean) + ", " + str(slope))
+        if 'config' not in filename:
+            print("Calculating (mean, slope) for file: " + filename)
+            eset = EEGSet(inputpath + filename, boundaryfilepath, 'none','none',"EDA")
+            mean, slope = eset.process()
+            print("Should see mean = 5 and slope = 0")
+            print(str(mean) + ", " + str(slope))
 
-        print("Output string for this file: ")
-        print(eset.output_string)
-        stringtowrite += eset.output_string + "\n"
+            print("Output string for this file: ")
+            print(eset.output_string)
+            stringtowrite += eset.output_string + "\n"
 
-inputpath = EDA_folder # folder which contains EEG files
-boundaryfilepath = EDA_boundaries + "bounds_emp1pos_emp2neg.csv" # path to boundaries
-outputfilepath = EDA_output + "inspectiontestoutput2.csv"
+    inputpath = EDA_folder # folder which contains EEG files
+    boundaryfilepath = EDA_boundaries + "bounds_emp1pos_emp2neg.csv" # path to boundaries
+    outputfilepath = EDA_output + "inspectiontestoutput2.csv"
 
-stringtowrite = ''
+    stringtowrite = ''
 
-print("should see pos slope on emp1, neg slope on emp2")
-for filename in os.listdir(inputpath):
+    print("should see pos slope on emp1, neg slope on emp2")
+    for filename in os.listdir(inputpath):
 
-    if 'config' not in filename:
-        print("Calculating (mean, slope) for file: " + filename)
-        eset = EEGSet(inputpath + filename, boundaryfilepath, "EDA")
-        mean, slope = eset.process()
-        print(str(mean) + ", " + str(slope))
+        if 'config' not in filename:
+            print("Calculating (mean, slope) for file: " + filename)
+            eset = EEGSet(inputpath + filename, boundaryfilepath, 'none','none',"EDA")
+            mean, slope = eset.process()
+            print(str(mean) + ", " + str(slope))
 
-        print("Output string for this file: ")
-        print(eset.output_string)
-        stringtowrite += eset.output_string + "\n"
+            print("Output string for this file: ")
+            print(eset.output_string)
+            stringtowrite += eset.output_string + "\n"
 
 
 
-with open(outputfilepath, 'w') as f:
-    f.write(stringtowrite)
+    with open(outputfilepath, 'w') as f:
+        f.write(stringtowrite)
 
 
     
