@@ -5,6 +5,16 @@ import os
 
 import pathlib
 
+EEG_files = "/test files/EEG files/"
+EEG_boundaries = ""
+EEG_output = ""
+
+EDA_folders = "/test files/EDA folders/"
+EDA_boundaries = ""
+EDA_output = ""
+
+
+
 class Empatica():
 
     def __init__(self, folderpath, datalist):
@@ -44,7 +54,7 @@ time_points = np.linspace(0, 60 - 1/220, 60*220)
 data_points = np.append(np.sin(2*np.pi*5*time_points[0:20*220]), np.append(np.sin(2*np.pi*10*time_points[20*220:40*220]),np.sin(2*np.pi*20*time_points[40*220:60*220])))
 
 # make participant file
-with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/EEGsine,sine.txt", "w") as f:
+with open(EEG_files + "EEGsine,sine.txt", "w") as f:
     f.write("index\ttp9\ttp10\tfp1\tfp2\n")
     stringtowrite = ""
     for i in range(len(time_points)):
@@ -53,16 +63,12 @@ with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered fil
 
 boundaries = ["EEGsine,sine.txt,0 8800 ,0 4400 8800 13200 ,4400 13200 ,400 600 2746 3422 7882 8999 9032 10000 "]
 # make boundaries file
-with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/boundstest.csv", "w") as f:
+with open(EEG_boundaries, "w") as f:
     for i in boundaries:
         f.write(i + "\n")
 
 
 # TEST EEG
-inputpath = "C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/" # folder which contains EEG files
-boundaryfilepath = "C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/boundstest.csv" # path to boundaries
-outputfilepath = "C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/output.csv"
-
 stringToWrite = ""
 
 import time
@@ -72,7 +78,7 @@ for filename in os.listdir(inputpath):
     if "EEG" in filename:
 
         print("Calculating periodograms for file: " + filename)
-        eset = EEGSet(inputpath + filename, boundaryfilepath, "EEG")
+        eset = EEGSet(EEG_files, EEG_boundaries, "EEG")
         pgrams, bandpowers, relative = eset.process()
 
         # Test output
@@ -90,21 +96,6 @@ for filename in os.listdir(inputpath):
         print("Output string for this file:")
         print(eset.output_string)
         
-    
-# file 2:
-time_points = np.linspace(0, 75 - 1/220, 75*220)
-data_points = np.append(np.array([500]*15*220),
-                        np.append(np.sin(2*np.pi*10*time_points[15*220:40*220]),
-                                  np.sin(2*np.pi*15*time_points[40*220:42*220]),
-                                  np.sin(2*np.pi*20*time_points[42*220:75*220])))
-
-# make participant file
-with open("C:/Users/alzfr/Desktop/testLombscargle/UnitTesting files/filtered files/EEGtestart,testart.txt", "w") as f:
-    f.write("index\ttp9\ttp10\tfp1\tfp2\n")
-    stringtowrite = ""
-    for i in range(len(time_points)):
-        stringtowrite+=str(i) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\n"
-    f.write(stringtowrite)
 
                                      
 #print("time: " + str(time.time() - startTime))
@@ -117,11 +108,11 @@ print("##################################################")
 print(" MAKING EDA FILES")
 
 try:
-    os.mkdir("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/")
+    os.mkdir(EDA_folders + "const10/")
 except:
     print("cannot create existing folder")
     
-with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/EDA.csv", "w") as f:
+with open(EDA_folders + "const10/EDA.csv", "w") as f:
     f.write("1524483828.23397\n4.0000")
     values = [str(10) for x in range(1000)]
     stringToWrite = ""
@@ -132,13 +123,9 @@ with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/const10/ED
 
 boundaries = ["const10,0 100 200 250 333 448 882 932 "]
 # make boundaries file
-with open("C:/Users/alzfr/Desktop/testEDA/UnitTesting files/boundstest.csv", "w") as f:
+with open(EDA_boundaries, "w") as f:
     for i in boundaries:
         f.write(i + "\n")
-
-inputpath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/raw files/" # folder which contains EEG files
-boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/boundstest.csv" # path to boundaries
-outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/output.csv"
 
 stringToWrite = ""
 
@@ -152,7 +139,7 @@ print("")
 for filename in os.listdir(inputpath):
 
     print("Calculating (mean, slope) for file: " + filename)
-    eset = EEGSet(inputpath + filename, boundaryfilepath, "EDA")
+    eset = EEGSet(EDA_folders + filename, EDA_boundaries, "EDA")
     mean, slope = eset.process()
     print("Should see mean = 10 and slope = 0")
     print(str(mean) + ", " + str(slope))
@@ -168,7 +155,7 @@ emp1data += [str(0) for x in range(4*4)] # 4 secs artifact
 emp1data += [str(5) for x in range(30*4)] # 30 secs good
 emp1data += [str(0) for x in range(1*4)] # 1 secs artifact
 emp1data += [str(5) for x in range(15*4)] # 15 secs good
-emp1 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/emp1', emp1data)
+emp1 = Empatica(EDA_folders + 'emp1', emp1data)
 
 emp2data = [str(10) for x in range(180*4)] # 3 mins garbage
 emp2data += [str(0) for x in range(20*4)] # 25 secs art
@@ -176,12 +163,27 @@ emp2data += [str(5) for x in range(4*4)] # 4 secs good
 emp2data += [str(0) for x in range(30*4)] # 30 secs art
 emp2data += [str(5) for x in range(1*4)] # 1 secs good
 emp2data += [str(0) for x in range(15*4)] # 15 secs art
-emp2 = Empatica('C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/emp2', emp2data)
+emp2 = Empatica(EDA_folder + 'emp2', emp2data)
+
+# EEG file
+time_points = np.linspace(0, 75 - 1/220, 75*220)
+data_points = np.append(np.array([500]*15*220),
+                        np.append(np.sin(2*np.pi*10*time_points[15*220:40*220]),
+                                  np.sin(2*np.pi*15*time_points[40*220:42*220]),
+                                  np.sin(2*np.pi*20*time_points[42*220:75*220])))
+
+# make participant file
+with open(EEG_files + "EEGtestart,testart.txt", "w") as f:
+    f.write("index\ttp9\ttp10\tfp1\tfp2\n")
+    stringtowrite = ""
+    for i in range(len(time_points)):
+        stringtowrite+=str(i) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\n"
+    f.write(stringtowrite)
 
 # after inspecting files
-inputpath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/" # folder which contains EEG files
-boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/bounds_artifactfree.csv" # path to boundaries
-outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/inspectiontestoutput1.csv"
+inputpath = EDA_folders # folder which contains EEG files
+boundaryfilepath = EDA_boundaries + "bounds_artifactfree.csv" # path to boundaries
+outputfilepath = EDA_output + "inspectiontestoutput1.csv"
 
 stringtowrite = ''
 for filename in os.listdir(inputpath):
@@ -197,9 +199,9 @@ for filename in os.listdir(inputpath):
         print(eset.output_string)
         stringtowrite += eset.output_string + "\n"
 
-inputpath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/testfiles/" # folder which contains EEG files
-boundaryfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/bounds_emp1pos_emp2neg.csv" # path to boundaries
-outputfilepath = "C:/Users/alzfr/Desktop/testEDA/UnitTesting files/inspectiontestoutput2.csv"
+inputpath = EDA_folder # folder which contains EEG files
+boundaryfilepath = EDA_boundaries + "bounds_emp1pos_emp2neg.csv" # path to boundaries
+outputfilepath = EDA_output + "inspectiontestoutput2.csv"
 
 stringtowrite = ''
 
