@@ -98,7 +98,8 @@ class EEGSet():
             
         if self.originalSet != "file does not exist":
             print("FILE EXISTS")
-            self.condition = self.importConditions(self.conditionsFilename)
+            if self.conditionsFilename != "none":
+                self.condition = self.importConditions(self.conditionsFilename)
             
             if self.missingFilename != "none":
                 self.missing_channels = self.get_missing_channels(self.missingFilename)
