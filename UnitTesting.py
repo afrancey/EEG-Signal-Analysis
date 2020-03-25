@@ -53,6 +53,7 @@ class Empatica():
 # first three channels have boundaries covering two sections each
 # last channel has boundaries spread out
 
+
 time_points = np.linspace(0, 60 - 1/220, 60*220)
 data_points = np.append(np.sin(2*np.pi*5*time_points[0:20*220]), np.append(np.sin(2*np.pi*10*time_points[20*220:40*220]),np.sin(2*np.pi*20*time_points[40*220:60*220])))
 
@@ -74,7 +75,7 @@ with open(EEG_boundaries + "EEGsine.csv", "w") as f:
 # TEST EEG
 stringToWrite = ""
 
-print("Calculating periodograms for file: " + EEG_files + "EEHsine,sine.txt")
+print("Calculating periodograms for file: " + EEG_files + "EEGsine,sine.txt")
 eset = EEGSet(EEG_files + "EEGsine,sine.txt", EEG_boundaries + "EEGsine.csv", 'none','none',"EEG")
 
 pgrams, bandpowers, relative = eset.process()
@@ -161,12 +162,12 @@ emp2data += [str(5) for x in range(1*4)] # 1 secs good
 emp2data += [str(0) for x in range(15*4)] # 15 secs art
 emp2 = Empatica(EDA_folders + 'emp2', emp2data)
 
-# EEG file
+### EEG file
 time_points = np.linspace(0, 75 - 1/220, 75*220)
 data_points = np.append(np.array([500]*15*220),
                         np.append(np.sin(2*np.pi*10*time_points[15*220:40*220]),
-                                  np.sin(2*np.pi*15*time_points[40*220:42*220]),
-                                  np.sin(2*np.pi*20*time_points[42*220:75*220])))
+                                  np.append(np.sin(2*np.pi*15*time_points[40*220:42*220]),
+                                            np.sin(2*np.pi*20*time_points[42*220:75*220]))))
 
 # make participant file
 with open(EEG_files + "EEGtestart,testart.txt", "w") as f:
