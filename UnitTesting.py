@@ -74,31 +74,25 @@ with open(EEG_boundaries + "EEGsine.csv", "w") as f:
 # TEST EEG
 stringToWrite = ""
 
-import time
-startTime = time.time()
+print("Calculating periodograms for file: " + EEG_files + "EEHsine,sine.txt")
+eset = EEGSet(EEG_files + "EEGsine,sine.txt", EEG_boundaries + "EEGsine.csv", 'none','none',"EEG")
 
-for filename in os.listdir(EEG_files):
-    if "EEG" in filename:
+pgrams, bandpowers, relative = eset.process()
 
-        print("Calculating periodograms for file: " + filename)
-        eset = EEGSet(EEG_files + filename, EEG_boundaries + "EEGsine.csv", 'none','none',"EEG")
+# Test output
+print("Band Order: delta, theta, alpha, beta")
+print("EEGsine")
+print("Channel 1 Bandpowers: Expect to see large beta")
+print(bandpowers[0])
+print("Channel 2: Expect to see large alpha")
+print(bandpowers[1])
+print("Channel 3: Expect to see large theta")
+print(bandpowers[2])
+print("Channel 4: Expect to see a mix")
+print(bandpowers[3])
 
-        pgrams, bandpowers, relative = eset.process()
-
-        # Test output
-        print("Band Order: delta, theta, alpha, beta")
-        print("EEGsine")
-        print("Channel 1 Bandpowers: Expect to see large beta")
-        print(bandpowers[0])
-        print("Channel 2: Expect to see large alpha")
-        print(bandpowers[1])
-        print("Channel 3: Expect to see large theta")
-        print(bandpowers[2])
-        print("Channel 4: Expect to see a mix")
-        print(bandpowers[3])
-
-        print("Output string for this file:")
-        print(eset.output_string)
+print("Output string for this file:")
+print(eset.output_string)
         
 
                                      
@@ -139,18 +133,15 @@ startTime = time.time()
 print("...")
 print(" RESULTS")
 print("")
-
-for filename in os.listdir(EDA_folders):
  
-    print("Calculating (mean, slope) for file: " + filename)
-    print(EDA_folders + filename)
-    eset = EEGSet(EDA_folders + filename, EDA_boundaries + "const10.csv", 'none','none',"EDA")
-    mean, slope = eset.process()
-    print("Should see mean = 10 and slope = 0")
-    print(str(mean) + ", " + str(slope))
+print("Calculating (mean, slope) for file: " + EDA_folders + "const10")
+eset = EEGSet(EDA_folders + "const10", EDA_boundaries + "const10.csv", 'none','none',"EDA")
+mean, slope = eset.process()
+print("Should see mean = 10 and slope = 0")
+print(str(mean) + ", " + str(slope))
 
-    print("Output string for this file: ")
-    print(eset.output_string)
+print("Output string for this file: ")
+print(eset.output_string)
 
 
 # create Empatica files to test whole pipeline
