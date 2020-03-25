@@ -5,13 +5,18 @@ import os
 
 import pathlib
 
-EEG_files = "/test files/EEG files/"
-EEG_boundaries = ""
-EEG_output = ""
+C:/Users/AFStealth/Desktop/test files
 
-EDA_folders = "/test files/EDA folders/"
-EDA_boundaries = ""
-EDA_output = ""
+dirname = os.path.dirname(__file__) + "/"
+
+EEG_files = dirname + "/test files/EEG/files/"
+EEG_boundaries = dirname + "/test files/EEG/boundaries/"
+EEG_output = dirname + "/test files/EEG/output/"
+
+
+EDA_files = dirname + "/test files/EDA/files/"
+EDA_boundaries = dirname + "/test files/EDA/boundaries/"
+EDA_output = dirname + "/test files/EDA/output/"
 
 
 
