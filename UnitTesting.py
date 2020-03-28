@@ -164,9 +164,9 @@ emp2 = Empatica(EDA_folders + 'emp2', emp2data)
 
 ### EEG file
 time_points = np.linspace(0, 75 - 1/220, 75*220)
-data_points = np.append(np.array([500]*15*220),
+data_points = np.append(np.sin(2*np.pi*6*time_points[:15*220]), # outside analysis interval according to config file
                         np.append(np.sin(2*np.pi*10*time_points[15*220:40*220]),
-                                  np.append(np.sin(2*np.pi*15*time_points[40*220:42*220]),
+                                  np.append(np.sin(2*np.pi*6*time_points[40*220:42*220]), # consider this the artifact portion
                                             np.sin(2*np.pi*20*time_points[42*220:75*220]))))
 
 # make participant file
@@ -177,8 +177,8 @@ with open(EEG_files + "EEGtestart,testart.txt", "w") as f:
         stringtowrite+=str(i) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\t" + str(data_points[i]) + "\n"
     f.write(stringtowrite)
 
-inspected = False
-if inspected:
+inspectedEDA = False
+if inspectedEDA:
     # after inspecting files
     inputpath = EDA_folders # folder which contains EEG files
     boundaryfilepath = EDA_boundaries + "bounds_artifactfree.csv" # path to boundaries
@@ -221,6 +221,30 @@ if inspected:
 
     with open(outputfilepath, 'w') as f:
         f.write(stringtowrite)
+
+inspectedEEG = True
+if inspectedEEG:
+    stringToWrite = ""
+
+    print("Calculating periodograms for file: " + EEG_files + "EEGtestart,testart.txt")
+    eset = EEGSet(EEG_files + "EEGtestart,testart.txt", EEG_boundaries + "bounds_testart.csv", 'none','none',"EEG")
+
+    pgrams, bandpowers, relative = eset.process()
+
+    # Test output
+    print("Band Order: delta, theta, alpha, beta")
+    print("Channel 1 Bandpowers: theta rejected, no delta")
+    print(bandpowers[0])
+    print("Channel 2: theta rejected, no delta")
+    print(bandpowers[1])
+    print("Channel 3: theta alpha beta mix")
+    print(bandpowers[2])
+    print("Channel 4: theta alpha beta mix")
+    print(bandpowers[3])
+
+    print("Output string for this file:")
+    print(eset.output_string)
+    
 
 
     
