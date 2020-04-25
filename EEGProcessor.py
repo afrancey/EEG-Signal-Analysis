@@ -463,7 +463,7 @@ class EEGSet():
             for j in range(len(self.band_boundary_indices) - 1):
 
                 samples_to_integrate = pgram[self.band_boundary_indices[j]:self.band_boundary_indices[j+1]]
-                out[i][j] = numpy.trapz(samples_to_integrate, x = None, dx = self.gridspacing)
+                out[i][j] = np.trapz(samples_to_integrate, x = None, dx = self.gridspacing)
 
             for j in range(len(self.band_boundary_indices) - 1):
                 relative[i][j] = float(out[i][j])/sum(out[i])
@@ -529,7 +529,7 @@ if __name__ == '__main__':
     import time
     startTime = time.time()
 
-    analysis_type = "EDA"
+    analysis_type = "EEG"
 
     headings = {"EDA":"file,subject,time,group,mean,slope\n", "EEG":"name,subject,time,group,delta,theta,alpha,beta\n"}
     stringToWrite = headings[analysis_type]
