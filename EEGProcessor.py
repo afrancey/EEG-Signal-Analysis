@@ -488,21 +488,21 @@ if __name__ == '__main__':
     #https://stackoverflow.com/questions/24702807/lomb-scargle-vs-fft-power-spectrum-crashes-with-evenly-spaced-data/
     #lol
 
-    inputpathEEG = "C:/Users/alzfr/Desktop/testLombscargle/filtered (1,30) order 3 data/" # folder which contains EEG files
-    boundaryfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/inspected/combined.csv" # path to boundaries
-    outputfilepathEEG = "C:/Users/alzfr/Desktop/testLombscargle/output.csv"
-    missingchannelspathEEG = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/missing_channels.csv"
+    inputpathEEG = "C:/Users/AFStealth/Documents/thesis stats/THESIS2018/expt2/eeg data/filtered (1,30) order 3 data/" # folder which contains EEG files
+    boundaryfilepathEEG = "C:/Users/AFStealth/Documents/thesis stats/THESIS2018/expt2/eeg data/inspected/combined.csv" # path to boundaries
+    outputfilepathEEG = "C:/Users/AFStealth/Desktop/EEGoutput.csv"
+    missingchannelspathEEG = "C:/Users/AFStealth/Documents/thesis stats/THESIS2018/expt2/missing_channels.csv"
 
-    inputpathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/empatica/" # folder which contains EEG files
-    boundaryfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/bounds_FINAL.csv" # path to boundaries
-    outputfilepathEDA = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/output_FINAL.csv"
+    inputpathEDA = "C:/Users/AFStealth/Documents/thesis stats/THESIS2018/expt2/empatica/" # folder which contains EEG files
+    boundaryfilepathEDA = "C:/Users/AFStealth/Documents/thesis stats/THESIS2018/expt2/analysis files/eda/bounds_FINAL.csv" # path to boundaries
+    outputfilepathEDA = "C:/Users/AFStealth/Desktop/EDAoutput.csv"
 
-    conditionsfilepath = "C:/Users/alzfr/Documents/thesis stats/THESIS2018/expt2/PARTICIPANTS.csv"
+    conditionsfilepath = "C:/Users/AFStealth/Documents/thesis stats/THESIS2018/expt2/PARTICIPANTS.csv"
 
     import time
     startTime = time.time()
 
-    analysis_type = "EEG"
+    analysis_type = "EDA"
 
     headings = {"EDA":"file,subject,time,group,mean,slope\n", "EEG":"name,subject,time,group,delta,theta,alpha,beta\n"}
     stringToWrite = headings[analysis_type]
