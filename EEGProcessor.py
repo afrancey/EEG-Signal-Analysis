@@ -122,7 +122,7 @@ class EEGSet():
             pgrams = self.getPeriodograms_lombwelch()
 
             # get powers between each index
-            bandpowers, relative = self.get_bands(pgrams)
+            bandpowers, relative = self.get_bands_trapz(pgrams)
 
             # get average bandpowers
             avgbands = self.get_average_bands(bandpowers)
